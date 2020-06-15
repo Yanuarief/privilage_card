@@ -1,0 +1,15 @@
+<IfModule mod_headers.c>
+<FilesMatch "\.(ttf|ttc|otf|eot|woff|woff2|font.css|css|js)$">
+     Header set Access-Control-Allow-Credentials true
+     Header set Access-Control-Allow-Origin "*"
+     Header set Access-Control-Allow-Headers: "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+</FilesMatch>
+</IfModule>
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /member/index.html [L]
+</IfModule>
