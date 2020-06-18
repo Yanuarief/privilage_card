@@ -19,6 +19,7 @@ import { news } from './news/index.js'
 import { point_setting } from './point_setting/index.js'
 import { bank } from './bank/index.js'
 import { earnpoint } from './earnpoint/index.js'
+import { reedem } from './reedem/index.js'
 
 var page = []
 
@@ -44,6 +45,7 @@ page = page.concat(
     point_setting,
     bank,
     earnpoint,
+    reedem
 );
 
 export default page

@@ -143,7 +143,7 @@ var rest = {
     editkartu: baseurl + "editkartu",
     /* End Bank */
 
-    /* News */
+    /* Earn Points */
     earnpoint: baseurl + "earnpoint",
     earnpointbyid: baseurl + "earnpointbyid",
     addearnpoint: baseurl + "addearnpoint",
@@ -153,7 +153,14 @@ var rest = {
     listmemberbyid: baseurl + "listmemberbyid",
     listtenant: baseurl + "listtenant",
     listtenantbyid: baseurl + "listtenantbyid",
-    /* End News */
+    /* End Earn Points */
+
+    /* Reedem Points */
+    reedem: baseurl + "reedem",
+    reedembyid: baseurl + "reedembyid",
+    reedemitem: baseurl + "reedemitem",
+    editreedem: baseurl + "editreedem",
+    /* End Reedem Points */
 
 
     /* Setting Point */

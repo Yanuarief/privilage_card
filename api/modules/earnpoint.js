@@ -12,7 +12,7 @@ var image_type = [
     "small",
     "mini",
 ];
-const table = ['penjualan', 'pelanggan', 'tenant'];
+const table = ['penjualan', 'pelanggan', 'tenant', 'penjualan', 'jenis_kartu'];
 const monthNames = ['Januari', 'Februari', 'Maret', 'April', 'Mai', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 fecha.i18n['monthNames'] = monthNames;
 
@@ -42,6 +42,7 @@ exports.lists = function(resp, conn, params, res) {
                         LEFT JOIN ${table[1]} C
                         ON A.id_pelanggan = C.id_pelanggan
                         ${where}
+                        ORDER BY A.tanggal_penjualan DESC
                     ${limit};`;
 
     conn.query(` ${main_qry1}
@@ -164,21 +165,69 @@ exports.add = function(req, res, resp, conn) {
 
             var post1 = {};
             var post2 = {};
+            var post3 = {};
 
-            console.log(inp)
+            conn.query(`SELECT * FROM ${table[1]} WHERE id_pelanggan = '${inp.namaMember}'`, async function(error1, rows1, fields) {
+                if (rows1.length > 0) {
+                    var lastPoint = rows1[0].jumlah_point
+                    var addPoint = inp.totalPoint
+                    var lastNominal = rows1[0].jumlah_belanja
+                    var addNominal = ((inp.total_belanja.replace("Rp ", "")).replace(",00", "")).replace(/\./g, "")
 
-            // conn.query(`INSERT INTO ${table[0]} SET ?`, post1, async function(error, rows, fields) {
+                    post1['jumlah_point'] = parseInt(lastPoint) + parseInt(addPoint)
+                    post1['jumlah_belanja'] = parseInt(lastNominal) + parseInt(addNominal)
 
-            //     for (var i = 0; i < longs; i++) {
-            //         post2["name"] = inp.namaProduk[i]
-            //         post2["id_bank"] = rows.insertId
+                    conn.query(`UPDATE ${table[1]} SET ? where id_pelanggan = '${inp.namaMember}'`, post1)
 
-            //         conn.query(`INSERT INTO ${table[2]} SET ?`, post2)
-            //     }
+                    var longs = inp.namaTenant.length
 
-            // });
+                    for (var i = 0; i < longs; i++) {
+                        var nominal = ((inp.nominal[i].replace("Rp ", "")).replace(",00", "")).replace(/\./g, "")
+                        post2["tanggal_penjualan"] = inp.tglearn
+                        post2["id_tenant"] = inp.namaTenant[i]
+                        post2["id_pelanggan"] = inp.namaMember
+                        post2["nominal_penjualan"] = nominal
+                        post2["pembayaran_via"] = inp.bayar[i]
+                        post2["id_bank"] = inp.namaBank[i]
+                        post2["id_kartu"] = inp.idprodukkartu[i]
+                        post2["nomor_transaksi"] = inp.noKartu[i]
+                        post2["created_date"] = datenow
+                        post2["modified_date"] = datenow
 
-            items["data"] = post1;
+                        conn.query(`INSERT INTO ${table[3]} SET ?`, post2)
+
+                        if (inp.namaBank[i] != '0') {
+                            var where1 = `WHERE id_bank = '${inp.namaBank[i]}' 
+                                            AND id_produk_kartu = '${inp.idprodukkartu[i]}' 
+                                            AND LOCATE(bin, '${inp.noKartu[i]}')`
+                            var query1 = `SELECT * FROM ${table[4]} ${where1}`
+
+                            var getDatas = new Promise((resolve, reject) => {
+                                conn.query(`${query1}`, function(error2, rows2, fields2) {
+                                    if (rows2.length > 0) {
+                                        resolve(rows2[0].nominal)
+                                    } else {
+                                        console.log(error2)
+                                    }
+                                })
+
+                            })
+                            var noml = await getDatas
+                            post3['nominal'] = parseInt(noml) + parseInt(nominal)
+
+                            conn.query(`UPDATE ${table[4]} SET ? ${where1}`, post3)
+                        }
+
+                    }
+                } else {
+                    console.log(error1)
+                }
+
+            });
+
+
+
+            items["data"] = inp;
             items["authimg"] = respimg.data.auth
             items["allowimg"] = Array(inp.image)
             items["status"] = 200;
@@ -322,7 +371,7 @@ exports.listmember = function(req, res, resp, conn) {
 
 exports.listmemberbyid = function(req, res, resp, conn) {
     var search = req.query.member == null ? '' : req.query.member;
-    var where = `   WHERE id_pelanggan = ${search}`;
+    var where = `   WHERE id_pelanggan = '${search}'`;
 
     var main_qry = `SELECT id_pelanggan,
                     no_seri_barcode_pelanggan,

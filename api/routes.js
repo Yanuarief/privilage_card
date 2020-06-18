@@ -179,8 +179,11 @@ module.exports = function(app, upload) {
     app.get('/listtenantbyid', todoList.listtenantbyid);
     app.post('/addearnpoint', todoList.addearnpoint);
 
-    // app.post('/editearnpoint', todoList.editearnpoint);
-    // app.post('/delearnpoint', todoList.delearnpoint);
+    /* Reedem Points */
+    app.get('/reedem', todoList.reedem);
+    app.get('/reedembyid', todoList.reedembyid);
+    app.get('/reedemitem', todoList.reedemitem);
+    app.post('/editreedem', todoList.editreedem);
 
     /* Setting Point */
     app.get('/get_point_setting', todoList.point_get);

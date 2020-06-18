@@ -426,7 +426,7 @@ exports.byidfull = function(req, res, resp, conn, baseurl) {
     var params = req.query;
     var id = params.id == null ? '' : params.id;
     var produk = params.produk == '' || params.produk == null ? `` : `AND (B.name LIKE '${params.produk}' OR B.name IS NULL)`;
-    var bin = params.bin == '' || params.bin == null ? `` : `AND (C.bin LIKE '${params.bin}%')`;
+    var bin = params.bin == '' || params.bin == null ? `` : `AND LOCATE(C.bin, '${params.bin}') != 0`;
 
     var where = `WHERE A.status = '1' AND A.id_bank = '${id}' ${produk} ${bin}`;
 

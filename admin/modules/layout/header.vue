@@ -63,7 +63,7 @@
                         <span class="link-title">Earn Point</span>
                     </a>
                 </router-link>
-				<router-link tag="li" to="/redeem" class="nav-item">
+				<router-link tag="li" to="/reedem" class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="link-icon" data-feather="menu"></i>
                         <span class="link-title">Redeem Point</span>

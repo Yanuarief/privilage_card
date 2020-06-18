@@ -31,6 +31,7 @@ var news = require('./modules/news');
 var setting_point = require('./modules/setting_point');
 var bank = require('./modules/bank');
 var earnpoint = require('./modules/earnpoint');
+var reedem = require('./modules/reedem');
 
 
 var url_admin = 'https://jcm.gmscode.net/';
@@ -747,6 +748,40 @@ exports.listtenantbyid = function(req, res) {
     earnpoint.listtenantbyid(req, res, response, connection);
 };
 
+
+/* Reedem Points */
+exports.reedem = function(req, res) {
+    var params = req.query;
+    var list_params = {};
+    list_params["per_page"] = params.per_page == null ? 10 : parseInt(params.per_page);
+    list_params["current"] = params.page == null ? 1 : parseInt(params.page);
+    list_params["search"] = params.val == null ? '' : params.val;
+    list_params["url_admin"] = url_admin;
+    list_params["url_download"] = url_download;
+    reedem.lists(response, connection, list_params, res);
+};
+
+exports.reedembyid = function(req, res) {
+    var list_params = {};
+    list_params["url_admin"] = url_admin;
+    list_params["url_download"] = url_download;
+    reedem.byid(req, res, response, connection, list_params);
+};
+
+exports.reedemitem = function(req, res) {
+    var params = req.query;
+    var list_params = {};
+    list_params["per_page"] = params.per_page == null ? 10 : parseInt(params.per_page);
+    list_params["current"] = params.page == null ? 1 : parseInt(params.page);
+    list_params["search"] = params.val == null ? '' : params.val;
+    list_params["url_admin"] = url_admin;
+    list_params["url_download"] = url_download;
+    reedem.reedemitem(response, connection, list_params, res, req);
+};
+
+exports.editreedem = function(req, res) {
+    reedem.edit(req, res, response, connection);
+};
 
 
 
