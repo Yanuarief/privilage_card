@@ -6,7 +6,7 @@ export default
 $(function() {
 
     const loc = window.location.pathname;
-    const dir = "/member";
+    const dir = "/project/june_2020/2006_privilage_card/admin";
     var pathname = loc.replace(dir + "/", "");
     pathname = pathname == "" ? null : pathname;
 
@@ -19,24 +19,21 @@ $(function() {
     })
 
     async function init() {
-
-        if (token == null) {
+        if(token==null){
             this.$router.replace('/')
             $("#app .page-wrapper").addClass(" full-page");
             $("#app .page-content").hide();
         }
-
-        if (token != null && pathname == null) {
-            this.$router.replace('/home')
-        } else if (token != null) {
-            const auth = await axios.get(rest["checking"], {
+        
+        if(token!=null){
+            const auth = await axios.get(rest["checking"],{
                 headers: {
-                    Authorization: token
+                   Authorization: token
                 }
             });
             var active = auth.data.active;
-
-            if (active == false) {
+            
+            if(active==false){
                 localStorage.removeItem('token');
                 location.reload();
             }

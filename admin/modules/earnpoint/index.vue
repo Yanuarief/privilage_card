@@ -24,24 +24,24 @@ data() {
 },
 methods: {},
 mounted: async function(){
-    var search = [
-        $.html(`<div class="row"><div class="col-md-12"><div class="row">`),
-        $.html(`<div class="col-md-12">`),
-        $.inptext('Nama Member / Tenant','searchearn','searchearn',true,{
-            placeholder: 'Nama Member / Tenant'
-        }),
-        $.html(`</div>`),
-        $.html(`</div></div></div>`),
-    ]
-
-    var act = {
-        vue: this,
+    var vue = this 
+    $('#search-form').createForm({
+        vue: vue,
         action: `search`,
         back: false,
-        reset: true
-    }
-
-    $('#search-form').createForm(act,search);
+        reset: true,
+        form(){
+            return [
+                $.html(`<div class="row"><div class="col-md-12"><div class="row">`),
+                $.html(`<div class="col-md-12">`),
+                $.inptext('Nama Member / Tenant','searchearn','searchearn',true,{
+                    placeholder: 'Nama Member / Tenant'
+                }),
+                $.html(`</div>`),
+                $.html(`</div></div></div>`),
+            ]
+        }
+    });
 
     const router = this.$router
     const urldel = rest['delearnpoint']

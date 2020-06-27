@@ -24,47 +24,49 @@ module.exports = {
 	},
 	mounted(){
 		var vue = this
-		var act = {
-			api: rest["addkartu"],
-			vue: vue,
-			action: 'add',
-			back: 'bank'
+		$('#form-input-kartu').createForm({
+      rest:{
+        api: rest["addkartu"],
+      },
+      vue: vue,
+      action: 'add',
+      back: 'bank',
+      form(){
+        return [
+          $.html(`<div class="row" id="header"><div class="col-12"><div class="row"><div class="col-md-6">`),
+          $.inpselect2('Nama Bank','namaBank','namaBank',true,{
+                    placeholder: 'Nama Bank',
+                    api:rest["listbank"]
+                }),
+                $.html(`</div>`),
+                $.html(`<div class="col-md-6">`),
+                $.html(`<div class="form-group" id="namaProduk">
+                </div>`),
+                $.html(`</div></div></div></div>`),
+
+          $.html(`<div class="row" id="boxs"><div class="col-12" data-idbox="0"><div class="row"><div class="col-md-5">`),
+          $.inptext('Nama Jenis Kartu','namaJenis[]','namaJenis',true,{
+            placeholder: 'Nama Jenis Kartu'
+          }),
+                $.html(`</div>`),
+                $.html(`<div class="col-md-5">`),
+                $.inpnumber('Nomor BIN','noBin[]','noBin',true,{
+            placeholder: 'Nomor BIN'
+          }),
+          $.html(`</div>`),
+          $.html(`
+                   <div class="form-group">
+                      <label>Action</label>
+                      <div class="row">
+                         <div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a></div>
+                      </div>
+                   </div>
+
+          `),
+          $.html(`</div></div></div>`),
+        ]
       }
-
-		$('#form-input-kartu').createForm(act,
-		[
-            $.html(`<div class="row" id="header"><div class="col-12"><div class="row"><div class="col-md-6">`),
-			$.inpselect2('Nama Bank','namaBank','namaBank',true,{
-                placeholder: 'Nama Bank',
-                api:rest["listbank"]
-            }),
-            $.html(`</div>`),
-            $.html(`<div class="col-md-6">`),
-            $.html(`<div class="form-group" id="namaProduk">
-            </div>`),
-            $.html(`</div></div></div></div>`),
-
-			$.html(`<div class="row" id="boxs"><div class="col-12" data-idbox="0"><div class="row"><div class="col-md-5">`),
-			$.inptext('Nama Jenis Kartu','namaJenis[]','namaJenis',true,{
-				placeholder: 'Nama Jenis Kartu'
-			}),
-            $.html(`</div>`),
-            $.html(`<div class="col-md-5">`),
-            $.inpnumber('Nomor BIN','noBin[]','noBin',true,{
-				placeholder: 'Nomor BIN'
-			}),
-			$.html(`</div>`),
-			$.html(`
-               <div class="form-group">
-                  <label>Action</label>
-                  <div class="row">
-                     <div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a></div>
-                  </div>
-               </div>
-
-			`),
-			$.html(`</div></div></div>`),
-	  ]);
+    });
 
 	  $("#form-input-kartu").on("click","#boxs .plus", function(e){
          e.preventDefault();

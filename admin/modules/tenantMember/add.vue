@@ -24,30 +24,30 @@ module.exports = {
 	},
 	mounted(){
 		var vue = this
-		var act = {
-			api: rest["addtenantMember"],
+        $('#form-input').createForm({
+            rest: {
+            	api: rest["addtenantMember"],
+            },
 			vue: vue,
 			action: 'add',
-			back: 'tenantMember'
-        }
-
-
-		$('#form-input').createForm(act,
-		[
-            $.inptext('Nama Tenant','namaTenant','namaTenant',true,{
-				placeholder: 'Nama Tenant'
-            }),
-            $.inptext('Nama Pemilik','namaPemilik','namaPemilik',true,{
-				placeholder: 'Nama Pemilik'
-            }),
-            $.inpemail('Alamat E-mail','alamatEmail','alamatEmail',false,{
-				placeholder: 'Alamat E-mail'
-            }),
-            $.inpnumber('No. Telepon','noTelepon','noTelepon',true,{
-				placeholder: 'No. Telepon'
-            }),
-            
-		]);
+			back: 'tenantMember',
+			form(){
+				return [
+		            $.inptext('Nama Tenant','namaTenant','namaTenant',true,{
+						placeholder: 'Nama Tenant'
+		            }),
+		            $.inptext('Nama Pemilik','namaPemilik','namaPemilik',true,{
+						placeholder: 'Nama Pemilik'
+		            }),
+		            $.inpemail('Alamat E-mail','alamatEmail','alamatEmail',false,{
+						placeholder: 'Alamat E-mail'
+		            }),
+		            $.inpnumber('No. Telepon','noTelepon','noTelepon',true,{
+						placeholder: 'No. Telepon'
+		            }),
+				]
+			}
+        })
 	}
 };
 </script>

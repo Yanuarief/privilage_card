@@ -81,7 +81,7 @@ exports.lists = function(resp, conn, params, res) {
                     "jk": item.jk,
                     "hp": item.hp,
                     "point": item.point,
-                    "lahir": item.lahir == "0000-00-00 00:00:00" ? item.lahir : fecha.format(item.lahir, 'DD MMMM YYYY'),
+                    "lahir": item.lahir == "0000-00-00" ? item.lahir : fecha.format(item.lahir, 'DD MMMM YYYY'),
                     // "created_date": item.created_date == "0000-00-00 00:00:00" ? item.created_date : fecha.format(item.created_date, 'YYYY-MM-DD HH:mm:ss'),
                     // "modified_date": item.modified_date == "0000-00-00 00:00:00" ? item.modified_date : fecha.format(item.modified_date, 'YYYY-MM-DD HH:mm:ss')
                 };
@@ -168,7 +168,7 @@ exports.add = function(req, res, resp, conn) {
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0) {
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -236,7 +236,7 @@ exports.edit = function(req, res, resp, conn) {
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0 && id != null) {
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -299,7 +299,7 @@ exports.del = function(req, res, resp, conn) {
 
     const auth = req.headers.authorization
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0) {
             conn.query(`DELETE FROM ${table[0]} WHERE id_pelanggan = ${inp.id}`);
             items["msg"] = "Delete Successfully!!";

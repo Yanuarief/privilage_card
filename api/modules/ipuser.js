@@ -11,7 +11,7 @@ exports.public = function(resp,conn,params,res,req){
   
   var items = {}; 
   var table   = ['ipstack','ipuser'];
-  var qCekIPstack = "SELECT * FROM riv_"+table[0]+" WHERE count < 10000 ORDER BY id ASC LIMIT 1;";
+  var qCekIPstack = "SELECT * FROM "+table[0]+" WHERE count < 10000 ORDER BY id ASC LIMIT 1;";
 
   conn.query(qCekIPstack, function(error, rows, fields){
     var key_access = rows[0].key_access
@@ -19,10 +19,10 @@ exports.public = function(resp,conn,params,res,req){
     var datenowkey = fecha.format(new Date(), 'YYYY-MM')
     
     if(rows.length>0){
-      if(datemodifkey!=datenowkey){conn.query(`UPDATE riv_ipstack SET count="0", modified_date=NOW()`)}
+      if(datemodifkey!=datenowkey){conn.query(`UPDATE ipstack SET count="0", modified_date=NOW()`)}
         
       var ipv4 = clientIp.replace('::ffff:','');
-      var qCekIPuser = "SELECT * FROM riv_"+table[1]+" WHERE user_ip_public = '"+ipv4+"';";
+      var qCekIPuser = "SELECT * FROM "+table[1]+" WHERE user_ip_public = '"+ipv4+"';";
 
       conn.query(qCekIPuser, function(error, rows, fields){
         if(error){
@@ -40,8 +40,8 @@ exports.public = function(resp,conn,params,res,req){
             axios.get('http://api.ipstack.com/'+ipv4+'?access_key='+accessKey)
               .then(response => {
                 var qwe = JSON.stringify(response.data)
-                qIPuser = "INSERT INTO riv_"+table[1]+" (user_ip_public, user_info,count_per_days, created_date,modified_date) VALUES ('"+ipv4+"','"+qwe+"',1, NOW(), NOW());";
-                var qUpdateAccess = "UPDATE riv_"+table[0]+" SET count = count + 1 WHERE key_access = '"+accessKey+"';";
+                qIPuser = "INSERT INTO "+table[1]+" (user_ip_public, user_info,count_per_days, created_date,modified_date) VALUES ('"+ipv4+"','"+qwe+"',1, NOW(), NOW());";
+                var qUpdateAccess = "UPDATE "+table[0]+" SET count = count + 1 WHERE key_access = '"+accessKey+"';";
                 
                   conn.query(''+qUpdateAccess + qIPuser+'', function(error, rows, fields){
                     if(error){
@@ -62,8 +62,8 @@ exports.public = function(resp,conn,params,res,req){
               axios.get('http://api.ipstack.com/'+ipv4+'?access_key='+accessKey)
               .then(response => {
                 var qwe = JSON.stringify(response.data)
-                qIPuser = "UPDATE riv_"+table[1]+" SET count_per_days = count_per_days + 1, user_info = '"+qwe+"', modified_date=NOW() WHERE user_ip_public = '"+dataUser.user_ip_public+"';";
-                var qUpdateAccess = "UPDATE riv_"+table[0]+" SET count = count + 1 WHERE key_access = '"+accessKey+"';";
+                qIPuser = "UPDATE "+table[1]+" SET count_per_days = count_per_days + 1, user_info = '"+qwe+"', modified_date=NOW() WHERE user_ip_public = '"+dataUser.user_ip_public+"';";
+                var qUpdateAccess = "UPDATE "+table[0]+" SET count = count + 1 WHERE key_access = '"+accessKey+"';";
 
                 conn.query(''+qUpdateAccess + qIPuser+'', function(error, rows, fields){
                   if(error){

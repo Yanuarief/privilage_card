@@ -76,3 +76,8 @@
 label.error.text-danger {
     margin-bottom: 0;
 }
+
+
+.select2-container {
+  width: 100% !important;
+}

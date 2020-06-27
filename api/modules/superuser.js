@@ -80,7 +80,7 @@ exports.register = function(req, res, resp, conn) {
         items["status"] = 200;
         resp.ok(items, res);
     } else {
-        conn.query(`SELECT COUNT(*) as sum FROM riv_` + table + ` ` + where + ` limit 1;
+        conn.query(`SELECT COUNT(*) as sum FROM ` + table + ` ` + where + ` limit 1;
         `, [1], function(error, rows, fields) {
 
             if (rows[0].sum > 0) {
@@ -92,7 +92,7 @@ exports.register = function(req, res, resp, conn) {
             } else {
                 /*sendmail(code,email);*/
 
-                conn.query(`INSERT INTO riv_` + table + ` SET ?`, post,
+                conn.query(`INSERT INTO ` + table + ` SET ?`, post,
                     function(error, rows, fields) {
                         const auth = md5(base64encode(pass + datenow));
 
@@ -102,7 +102,7 @@ exports.register = function(req, res, resp, conn) {
                         post["first_date"] = datenow
                         post["created_date"] = datenow
 
-                        conn.query(`INSERT INTO riv_auth SET ?`, post);
+                        conn.query(`INSERT INTO auth SET ?`, post);
 
                         var items = {};
                         items["token"] = auth
@@ -120,12 +120,12 @@ exports.reqcode = function(req, res, resp, conn) {
     const code = generator()
     const auth = req.headers.authorization
 
-    conn.query(`SELECT a.* FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM account a INNER JOIN auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
         var datas = rows[0];
         if (rows.length > 0) {
             sendmail(code, datas.email);
 
-            conn.query(`UPDATE riv_account a INNER JOIN riv_auth b ON a.id=b.id_account SET a.pin="` + code + `" where b.auth="` + auth + `";`);
+            conn.query(`UPDATE account a INNER JOIN auth b ON a.id=b.id_account SET a.pin="` + code + `" where b.auth="` + auth + `";`);
 
             var items = {};
             items["msg"] = "Success, Please check your email ( " + datas.email + " )!!";
@@ -149,7 +149,7 @@ exports.login = function(req, res, resp, conn) {
     var pass = md5(base64encode(inp.password + inp.username))
 
     var where = ` WHERE username LIKE "` + user + `" AND password LIKE "` + pass + `" `;
-    var main_qry = `SELECT * FROM riv_` + table + ` ` + where + ` limit 1;`;
+    var main_qry = `SELECT * FROM ` + table + ` ` + where + ` limit 1;`;
 
     var post = {};
     post["username"] = inp.username
@@ -160,7 +160,7 @@ exports.login = function(req, res, resp, conn) {
         if (rows.length > 0) {
             var first = rows[0];
             if (first.username == user) {
-                conn.query(`SELECT a.*, b.active FROM riv_suauth a INNER JOIN riv_superuser b ON a.id_account=b.id WHERE id_account LIKE "` + first.id + `" LIMIT 1`, function(error, rows, fields) {
+                conn.query(`SELECT a.*, b.active FROM suauth a INNER JOIN superuser b ON a.id_account=b.id WHERE id_account LIKE "` + first.id + `" LIMIT 1`, function(error, rows, fields) {
                     var seconds = rows[0]
 
                     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
@@ -174,14 +174,14 @@ exports.login = function(req, res, resp, conn) {
                     post["modified_date"] = datenow
 
                     if (rows.length > 0) {
-                        conn.query(`UPDATE riv_suauth SET auth = "` + auth + `", created_date = "` + datenow + `" WHERE id_account LIKE "` + first.id + `" LIMIT 1;`);
+                        conn.query(`UPDATE suauth SET auth = "` + auth + `", created_date = "` + datenow + `" WHERE id_account LIKE "` + first.id + `" LIMIT 1;`);
                         items["active"] = seconds.active;
                         items["token"] = auth;
                         items["msg"] = "Success, Login is secure."
                         items["status"] = 200;
                         resp.ok(items, res);
                     } else {
-                        conn.query(`INSERT INTO riv_suauth SET ?`, post);
+                        conn.query(`INSERT INTO suauth SET ?`, post);
                         items["active"] = seconds.active;
                         items["token"] = auth;
                         items["msg"] = "Success, Login is secure."
@@ -212,14 +212,14 @@ exports.act = function(req, res, resp, conn) {
     var auth = req.headers.authorization
     var pin = req.body.code
 
-    conn.query(`SELECT COUNT(*) as sum FROM riv_auth WHERE auth LIKE "` + auth + `" LIMIT 1`, function(error, rows, fields) {
+    conn.query(`SELECT COUNT(*) as sum FROM auth WHERE auth LIKE "` + auth + `" LIMIT 1`, function(error, rows, fields) {
         var get = rows[0].sum
         if (get == 1) {
-            conn.query(`SELECT a.* FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where a.pin="` + pin + `" and b.auth="` + auth + `";`, function(error, rows, fields) {
+            conn.query(`SELECT a.* FROM account a INNER JOIN auth b ON a.id=b.id_account where a.pin="` + pin + `" and b.auth="` + auth + `";`, function(error, rows, fields) {
                 var result = rows[0];
                 if (rows.length > 0) {
                     if (result.active == 0) {
-                        conn.query(`UPDATE riv_account a INNER JOIN riv_auth b ON a.id=b.id_account SET a.active=1 where a.pin="` + pin + `" and b.auth="` + auth + `";`);
+                        conn.query(`UPDATE account a INNER JOIN auth b ON a.id=b.id_account SET a.active=1 where a.pin="` + pin + `" and b.auth="` + auth + `";`);
                         items["msg"] = "Your account has been activated.";
                         items["status"] = 200;
                         resp.ok(items, res);
@@ -249,7 +249,7 @@ exports.forgot = function(req, res, resp, conn) {
     var email = req.body.email
     var where = ' WHERE email LIKE "' + email + '"';
 
-    conn.query(`SELECT * FROM riv_` + table + ` ` + where + ` limit 1;`,
+    conn.query(`SELECT * FROM ` + table + ` ` + where + ` limit 1;`,
         function(error, rows, fields) {
             var rowusr = rows[0]
 
@@ -259,7 +259,7 @@ exports.forgot = function(req, res, resp, conn) {
 
                 const fauth = md5(base64encode(rowusr.password + datenow));
 
-                conn.query(`INSERT INTO riv_forget SET id_account="` + rowusr.id + `", forget="` + fauth + `", status="1", created_date=NOW(), modified_date=NOW()`);
+                conn.query(`INSERT INTO forget SET id_account="` + rowusr.id + `", forget="` + fauth + `", status="1", created_date=NOW(), modified_date=NOW()`);
                 forgetmail(email, fauth);
 
                 items["msg"] = "Success, check your email!";
@@ -281,14 +281,14 @@ exports.newpass = function(req, res, resp, conn) {
     const getbpass = req.body.password
     var where = ' WHERE forget LIKE "' + auth_forget + '"';
 
-    conn.query(`SELECT a.*, b.username FROM riv_` + table + ` a INNER JOIN riv_account b ON b.id=a.id_account ` + where + ` limit 1;`,
+    conn.query(`SELECT a.*, b.username FROM ` + table + ` a INNER JOIN account b ON b.id=a.id_account ` + where + ` limit 1;`,
         function(error, rows, fields) {
 
             if (rows.length > 0) {
                 var datasx = rows[0]
                 const pass = md5(base64encode(getbpass + datasx.username))
-                conn.query(`UPDATE riv_account SET password="` + pass + `" where id like "` + datasx.id_account + `";`);
-                conn.query(`UPDATE riv_` + table + ` SET status="0" where id like "` + datasx.id + `";`);
+                conn.query(`UPDATE account SET password="` + pass + `" where id like "` + datasx.id_account + `";`);
+                conn.query(`UPDATE ` + table + ` SET status="0" where id like "` + datasx.id + `";`);
 
                 items["msg"] = "Success, update new password!";
                 items["status"] = 200;
@@ -307,14 +307,14 @@ exports.changepass = function(req, res, resp, conn) {
     const auth = req.headers.authorization
     const inp = req.body;
 
-    conn.query(`SELECT a.* FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM account a INNER JOIN auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
         var datas = rows[0];
         if (rows.length > 0) {
             const oldpass = md5(base64encode(inp.oldpass + datas.username))
             const newpass = md5(base64encode(inp.newpass + datas.username))
 
             if (oldpass == datas.password) {
-                conn.query(`UPDATE riv_account a INNER JOIN riv_auth b ON a.id=b.id_account SET a.password="` + newpass + `" where b.auth="` + auth + `";`);
+                conn.query(`UPDATE account a INNER JOIN auth b ON a.id=b.id_account SET a.password="` + newpass + `" where b.auth="` + auth + `";`);
                 items["error"] = true
                 items["msg"] = "Success, Update your password!!";
                 items["status"] = 200;
@@ -346,11 +346,11 @@ exports.changeprofile = function(req, res, resp, conn) {
     const status = inp.status
     const pekerjaan = inp.pekerjaan
 
-    conn.query(`SELECT a.*, b.id_account FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
+    conn.query(`SELECT a.*, b.id_account FROM account a INNER JOIN auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
         var datas = rows[0];
         if (rows.length > 0) {
             const id_account = datas.id_account;
-            conn.query(`SELECT * FROM riv_profile where account_id="` + id_account + `";`, function(error, rows, fields) {
+            conn.query(`SELECT * FROM profile where account_id="` + id_account + `";`, function(error, rows, fields) {
                 var post = {}
 
                 if (rows.length > 0) {
@@ -362,7 +362,7 @@ exports.changeprofile = function(req, res, resp, conn) {
                     post['status'] = status
                     post['pekerjaan'] = pekerjaan
 
-                    conn.query(`UPDATE riv_profile SET ?, modified_date=NOW() WHERE account_id="` + id_account + `"`, post);
+                    conn.query(`UPDATE profile SET ?, modified_date=NOW() WHERE account_id="` + id_account + `"`, post);
                     items["msg"] = "Success, Update account profile!!";
                     items["status"] = 200;
                     resp.ok(items, res);
@@ -375,7 +375,7 @@ exports.changeprofile = function(req, res, resp, conn) {
                     post['status'] = status
                     post['pekerjaan'] = pekerjaan
 
-                    conn.query(`INSERT INTO riv_profile SET ?, created_date=NOW()`, post);
+                    conn.query(`INSERT INTO profile SET ?, created_date=NOW()`, post);
 
                     items["msg"] = "Success, Update account profile!!";
                     items["status"] = 200;
@@ -394,11 +394,11 @@ exports.getprofile = function(req, res, resp, conn) {
     var items = {};
     const auth = req.headers.authorization
 
-    conn.query(`SELECT a.*, b.id_account FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
+    conn.query(`SELECT a.*, b.id_account FROM account a INNER JOIN auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
         var datas = rows[0];
         if (rows.length > 0) {
             const id_account = datas.id_account;
-            conn.query(`SELECT * FROM riv_profile where account_id="` + id_account + `";`, function(error, rows, fields) {
+            conn.query(`SELECT * FROM profile where account_id="` + id_account + `";`, function(error, rows, fields) {
                 var post = {}
                 var pro = rows[0]
 
@@ -438,11 +438,11 @@ exports.getemail = function(req, res, resp, conn) {
     var items = {};
     const auth = req.headers.authorization
 
-    conn.query(`SELECT a.*, b.id_account FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
+    conn.query(`SELECT a.*, b.id_account FROM account a INNER JOIN auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
         var datas = rows[0];
         if (rows.length > 0) {
             const id_account = datas.id_account;
-            conn.query(`SELECT * FROM riv_account where id="` + id_account + `";`, function(error, rows, fields) {
+            conn.query(`SELECT * FROM account where id="` + id_account + `";`, function(error, rows, fields) {
                 var post = {}
                 var pro = rows[0]
 
@@ -468,17 +468,17 @@ exports.changeemail = function(req, res, resp, conn) {
 
     const email = inp.email
 
-    conn.query(`SELECT a.*, b.id_account FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
+    conn.query(`SELECT a.*, b.id_account FROM account a INNER JOIN auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
         var datas = rows[0];
         if (rows.length > 0) {
             const id_account = datas.id_account;
-            conn.query(`SELECT * FROM riv_account where id="` + id_account + `" and email="` + email + `";`, function(error, rows, fields) {
+            conn.query(`SELECT * FROM account where id="` + id_account + `" and email="` + email + `";`, function(error, rows, fields) {
 
                 if (rows.length == 0) {
                     var post = {}
                     post['email'] = email
 
-                    conn.query(`UPDATE riv_account SET ?, modified_date=NOW() WHERE id="` + id_account + `"`, post);
+                    conn.query(`UPDATE account SET ?, modified_date=NOW() WHERE id="` + id_account + `"`, post);
                     items["error"] = true;
                     items["msg"] = "Success, Update email!!";
                     items["status"] = 200;
@@ -503,11 +503,11 @@ exports.getphone = function(req, res, resp, conn) {
     var items = {};
     const auth = req.headers.authorization
 
-    conn.query(`SELECT a.*, b.id_account FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
+    conn.query(`SELECT a.*, b.id_account FROM account a INNER JOIN auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
         var datas = rows[0];
         if (rows.length > 0) {
             const id_account = datas.id_account;
-            conn.query(`SELECT * FROM riv_profile where account_id="` + id_account + `";`, function(error, rows, fields) {
+            conn.query(`SELECT * FROM profile where account_id="` + id_account + `";`, function(error, rows, fields) {
                 var post = {}
                 if (rows.length > 0) {
                     var pro = rows[0]
@@ -542,11 +542,11 @@ exports.changephone = function(req, res, resp, conn) {
 
     const handphone = inp.handphone
 
-    conn.query(`SELECT a.*, b.id_account FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
+    conn.query(`SELECT a.*, b.id_account FROM account a INNER JOIN auth b ON a.id=b.id_account where b.auth="` + auth + `";`, function(error, rows, fields) {
         var datas = rows[0];
         if (rows.length > 0) {
             const id_account = datas.id_account;
-            conn.query(`SELECT * FROM riv_profile where account_id="` + id_account + `";`, function(error, rows, fields) {
+            conn.query(`SELECT * FROM profile where account_id="` + id_account + `";`, function(error, rows, fields) {
                 var post = {}
 
                 if (rows.length > 0) {
@@ -554,7 +554,7 @@ exports.changephone = function(req, res, resp, conn) {
                     post['account_id'] = id_account
                     post['handphone'] = handphone
 
-                    conn.query(`UPDATE riv_profile SET ?, modified_date=NOW() WHERE account_id="` + id_account + `"`, post);
+                    conn.query(`UPDATE profile SET ?, modified_date=NOW() WHERE account_id="` + id_account + `"`, post);
                     items["msg"] = "Success, Update phone number!!";
                     items["status"] = 200;
                     resp.ok(items, res);
@@ -563,7 +563,7 @@ exports.changephone = function(req, res, resp, conn) {
                     post['account_id'] = id_account
                     post['handphone'] = handphone
 
-                    conn.query(`INSERT INTO riv_profile SET ?, created_date=NOW()`, post);
+                    conn.query(`INSERT INTO profile SET ?, created_date=NOW()`, post);
 
                     items["msg"] = "Success, Update phone number!!";
                     items["status"] = 200;
@@ -585,7 +585,7 @@ exports.checking = function(req, res, resp, conn) {
     var auth = req.headers.authorization
     var where = ' WHERE auth LIKE "' + auth + '"';
 
-    conn.query(`SELECT * FROM riv_` + table + ` ` + where + ` limit 1;`,
+    conn.query(`SELECT * FROM ` + table + ` ` + where + ` limit 1;`,
         function(error, rows, fields) {
             var rowusr = rows[0]
 

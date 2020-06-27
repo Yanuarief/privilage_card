@@ -12,14 +12,14 @@ exports.lists = function(req,res,resp,conn){
     const detail_address = inp.detail_address
     const def = inp.def
     
-    conn.query(`SELECT a.*, b.id_account FROM riv_account a INNER JOIN riv_auth b ON a.id=b.id_account where b.auth="`+ auth +`";`,
+    conn.query(`SELECT a.*, b.id_account FROM account a INNER JOIN auth b ON a.id=b.id_account where b.auth="`+ auth +`";`,
       function (error, rows, fields){
         var datas = rows[0];
         if(rows.length>0){
 
             const id_account = datas.id_account;
 
-            conn.query(`SELECT * FROM riv_address WHERE account_id = `+ id_account +` ORDER BY riv_address.def LIMIT 1;`,  
+            conn.query(`SELECT * FROM address WHERE account_id = `+ id_account +` ORDER BY address.def LIMIT 1;`,  
             function (error, rows, fields){
             var post  = {};
             
@@ -32,7 +32,7 @@ exports.lists = function(req,res,resp,conn){
             post["created_date"] = datenow
             post["modified_date"] = datenow
     
-                conn.query(`INSERT INTO riv_address SET ?`,post);
+                conn.query(`INSERT INTO address SET ?`,post);
                 console.log(post);
                     items["token"] = auth;
                     items["msg"] = "Success, Update your data!!"; 

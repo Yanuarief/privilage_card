@@ -1,191 +1,191 @@
 export default
 $(function() {
-            'use strict';
-            var loadplugin = {}
+    'use strict';
+    var loadplugin = {}
 
-            $.urlParam = function(name) {
-                var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
-                if (results == null) {
-                    return null;
-                }
-                return decodeURI(results[1]) || 0;
+    $.urlParam = function(name) {
+        var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+        if (results == null) {
+            return null;
+        }
+        return decodeURI(results[1]) || 0;
+    }
+
+    String.prototype.cap = function() {
+        return this.charAt(0).toUpperCase() + this.slice(1)
+    }
+
+    $.pagination = function(limit, total, current_page) {
+        var total_page = Math.ceil(total / limit);
+        /* Pagination */
+        var total_page = total_page; /* Total Page*/
+        var current_page = current_page; /* Number Page */
+        var tot_mid = 5; /* Total Middle*/
+
+        var first_middle = tot_mid - Math.floor((tot_mid / 2));
+
+        var next_page = tot_mid - current_page;
+        var prev_page = next_page - current_page;
+
+        var pagination = ``;
+
+        if (total_page <= tot_mid) {
+            for (var i = 0; i < total_page; i++) {
+                var number = i + 1;
+                var act = current_page == number ? 'active' : '';
+                pagination += `<li class="paginate_button page-item ${act}"><a class="page-link" data-page="${number}">${number}</a></li>`;
+            }
+        }
+        if (total_page > tot_mid) {
+            for (var i = 0; i < tot_mid; i++) {
+                var number = i + 1;
+                var act = current_page == number ? 'active' : '';
+                pagination += `<li class="paginate_button page-item ${act}"><a class="page-link" data-page="${number}">${number}</a></li>`;
             }
 
-            String.prototype.cap = function() {
-                return this.charAt(0).toUpperCase() + this.slice(1)
-            }
-
-            $.pagination = function(limit, total, current_page) {
-                var total_page = Math.ceil(total / limit);
-                /* Pagination */
-                var total_page = total_page; /* Total Page*/
-                var current_page = current_page; /* Number Page */
-                var tot_mid = 5; /* Total Middle*/
-
-                var first_middle = tot_mid - Math.floor((tot_mid / 2));
-
-                var next_page = tot_mid - current_page;
-                var prev_page = next_page - current_page;
+            if (current_page >= first_middle && current_page <= tot_mid) {
+                var next_page = current_page + 2;
+                var prev_page = current_page - 2;
 
                 var pagination = ``;
-
-                if (total_page <= tot_mid) {
-                    for (var i = 0; i < total_page; i++) {
-                        var number = i + 1;
-                        var act = current_page == number ? 'active' : '';
-                        pagination += `<li class="paginate_button page-item ${act}"><a class="page-link" data-page="${number}">${number}</a></li>`;
-                    }
-                }
-                if (total_page > tot_mid) {
-                    for (var i = 0; i < tot_mid; i++) {
-                        var number = i + 1;
-                        var act = current_page == number ? 'active' : '';
-                        pagination += `<li class="paginate_button page-item ${act}"><a class="page-link" data-page="${number}">${number}</a></li>`;
-                    }
-
-                    if (current_page >= first_middle && current_page <= tot_mid) {
-                        var next_page = current_page + 2;
-                        var prev_page = current_page - 2;
-
-                        var pagination = ``;
-                        /* Prev Page */
-                        for (var i = prev_page - 1; i < current_page - 1; i++) {
-                            var number = i + 1;
-                            pagination += `<li class="paginate_button page-item"><a class="page-link" data-page="${number}">${number}</a></li>`;
-                        }
-
-                        /* Current Page */
-                        pagination += `<li class="paginate_button page-item active"><a class="page-link" data-page="${current_page}">${current_page}</a></li>`;
-
-                        /* Next Page */
-                        for (var i = current_page; i < next_page; i++) {
-                            var number = i + 1;
-                            pagination += `<li class="paginate_button page-item"><a class="page-link" data-page="${number}">${number}</a></li>`;
-                        }
-                    }
-
-                    if (next_page <= 0) {
-                        var next_page = current_page + 2;
-                        var prev_page = current_page - 2;
-
-                        var pagination = ``;
-                        /* Prev Page */
-                        for (var i = (prev_page - 1); i < (current_page - 1); i++) {
-                            var number = i + 1;
-                            pagination += `<li class="paginate_button page-item"><a class="page-link" data-page="${number}">${number}</a></li>`;
-                        }
-
-                        /* Current Page */
-                        pagination += `<li class="paginate_button page-item active"><a class="page-link" data-page="${current_page}">${current_page}</a></li>`;
-
-                        /* Next Page */
-                        for (var i = current_page; i < next_page; i++) {
-                            var number = i + 1;
-                            pagination += `<li class="paginate_button page-item"><a class="page-link" data-page="${number}">${number}</a></li>`;
-                        }
-                    }
-
-                    var end_page = (total_page - tot_mid);
-                    var last_middle = end_page + tot_mid - Math.floor((tot_mid / 2));
-
-                    if (current_page > last_middle) {
-
-                        var pagination = ``;
-                        for (var i = end_page; i < total_page; i++) {
-                            var number = i + 1;
-                            var act = current_page == number ? 'active' : '';
-                            pagination += `<li class="paginate_button page-item  ${act}"><a class="page-link" data-page="${number}">${number}</a></li>`;
-                        }
-                    }
+                /* Prev Page */
+                for (var i = prev_page - 1; i < current_page - 1; i++) {
+                    var number = i + 1;
+                    pagination += `<li class="paginate_button page-item"><a class="page-link" data-page="${number}">${number}</a></li>`;
                 }
 
-                var first = isNaN(total_page) == true ? `` : `<li class="paginate_button page-item previous"><a class="page-link" data-page="1">First</a></li>`;
-                var last = isNaN(total_page) == true ? `` : `<li class="paginate_button page-item previous"><a class="page-link" data-page="${total_page}">Last</a></li>`;
+                /* Current Page */
+                pagination += `<li class="paginate_button page-item active"><a class="page-link" data-page="${current_page}">${current_page}</a></li>`;
 
-                return first + pagination + last;
+                /* Next Page */
+                for (var i = current_page; i < next_page; i++) {
+                    var number = i + 1;
+                    pagination += `<li class="paginate_button page-item"><a class="page-link" data-page="${number}">${number}</a></li>`;
+                }
             }
 
-            $.createContent = async function(nameid, load, opt = {}) {
+            if (next_page <= 0) {
+                var next_page = current_page + 2;
+                var prev_page = current_page - 2;
 
-                    var limit = opt.limit
-                    var page = opt.page
-                    var src = opt.search != null ? opt.search : ``;
-                    var param = (page != null ? `?per_page=${limit}&page=${page}` : `?per_page=${limit}`) + src;
-                    const datas = await load(param);
+                var pagination = ``;
+                /* Prev Page */
+                for (var i = (prev_page - 1); i < (current_page - 1); i++) {
+                    var number = i + 1;
+                    pagination += `<li class="paginate_button page-item"><a class="page-link" data-page="${number}">${number}</a></li>`;
+                }
 
-                    const id = nameid
-                    const title = datas.title
-                    const column = datas.column
-                    const array = datas.datas
-                    const value = datas.value
-                    const custom = datas.custom == null ? [] : datas.custom
-                    const action = datas.action == null ? [] : datas.action
-                    const search = datas.search
+                /* Current Page */
+                pagination += `<li class="paginate_button page-item active"><a class="page-link" data-page="${current_page}">${current_page}</a></li>`;
 
-                    const regex = /.?{{(.*?)}}/g
-                    const geteval = /.?(<~this.(.*?)~>)/g
+                /* Next Page */
+                for (var i = current_page; i < next_page; i++) {
+                    var number = i + 1;
+                    pagination += `<li class="paginate_button page-item"><a class="page-link" data-page="${number}">${number}</a></li>`;
+                }
+            }
 
-                    var content = ``
-                    var paging = ``
-                    var button_delete = ``
-                    if (array["data"] != null && array["data"].length > 0) {
-                        for (var i = 0; i < array['data'].length; i++) {
+            var end_page = (total_page - tot_mid);
+            var last_middle = end_page + tot_mid - Math.floor((tot_mid / 2));
 
-                            content += `<tr>
+            if (current_page > last_middle) {
+
+                var pagination = ``;
+                for (var i = end_page; i < total_page; i++) {
+                    var number = i + 1;
+                    var act = current_page == number ? 'active' : '';
+                    pagination += `<li class="paginate_button page-item  ${act}"><a class="page-link" data-page="${number}">${number}</a></li>`;
+                }
+            }
+        }
+
+        var first = isNaN(total_page) == true ? `` : `<li class="paginate_button page-item previous"><a class="page-link" data-page="1">First</a></li>`;
+        var last = isNaN(total_page) == true ? `` : `<li class="paginate_button page-item previous"><a class="page-link" data-page="${total_page}">Last</a></li>`;
+
+        return first + pagination + last;
+    }
+
+    $.createContent = async function(nameid, load, opt = {}) {
+
+            var limit = opt.limit 
+            var page = opt.page
+            var src = opt.search!=null?opt.search:``;
+            var param = (page != null ? `?per_page=${limit}&page=${page}` : `?per_page=${limit}`) + src;
+            const datas = await load(param);
+
+            const id = nameid
+            const title = datas.title
+            const column = datas.column
+            const array = datas.datas
+            const value = datas.value
+            const custom = datas.custom == null ? [] : datas.custom
+            const action = datas.action == null ? [] : datas.action
+            const search = datas.search
+
+            const regex = /.?{{(.*?)}}/g
+            const geteval = /.?(<~this.(.*?)~>)/g
+
+            var content = ``
+            var paging = ``
+            var button_delete = ``
+            if (array["data"] != null && array["data"].length > 0) {
+                for (var i = 0; i < array['data'].length; i++) {
+
+                content += `<tr>
                 <td><input type="checkbox" class="${id}-checkbyitem" data-id="${array['data'][i].id}"></td>`
 
-                            var middlebuild = ``
-                            var txtval = {}
-                            var finalval = ``
-                            for (var j = 0; j < value.length; j++) {
-                                if (custom.length > 0) {
+                        var middlebuild = ``
+                        var txtval = {}
+                        var finalval = ``
+                        for (var j = 0; j < value.length; j++) {
+                            if (custom.length > 0) {
 
-                                    var unkn = []
-                                    var catchval = {}
-                                    var matches = [];
-                                    var k = 0
-                                    var getfinal = ``
-                                    while (unkn = regex.exec(custom[j])) {
-                                        var thisunkn = unkn
-                                        while (matches = geteval.exec(unkn[1])) {
-                                            var setval = matches[1].replace(matches[1], eval("array['data'][i]." + matches[2] + ""))
-                                            if (k == 0) {
-                                                catchval[k] = thisunkn['input'].replace(matches[1], setval)
-                                            } else {
-                                                catchval[k] = catchval[k - 1].replace(matches[1], setval)
-                                            }
-                                            txtval[j] = catchval[k]
-
-                                            k++
-                                        }
-                                    }
-
-                                    var finalcrt = {}
-                                    var s = 0
-                                    var txtcrt = [];
-                                    while (txtcrt = regex.exec(txtval[j])) {
-                                        if (s == 0) {
-                                            finalcrt[s] = txtcrt['input'].replace(`{{${txtcrt[1]}}}`, txtcrt[0].replace(txtcrt[0], eval(txtcrt[1])))
+                                var unkn = []
+                                var catchval = {}
+                                var matches = [];
+                                var k = 0
+                                var getfinal = ``
+                                while (unkn = regex.exec(custom[j])) {
+                                    var thisunkn = unkn
+                                    while (matches = geteval.exec(unkn[1])) {
+                                        var setval = matches[1].replace(matches[1], eval("array['data'][i]." + matches[2] + ""))
+                                        if (k == 0) {
+                                            catchval[k] = thisunkn['input'].replace(matches[1], setval)
                                         } else {
-                                            finalcrt[s] = finalcrt[s - 1].replace(`{{${txtcrt[1]}}}`, txtcrt[0].replace(txtcrt[0], eval(txtcrt[1])))
+                                            catchval[k] = catchval[k - 1].replace(matches[1], setval)
                                         }
+                                        txtval[j] = catchval[k]
 
-                                        finalval = finalcrt[s]
-                                        s++
+                                        k++
+                                    }
+                                }
+
+                                var finalcrt = {}
+                                var s = 0
+                                var txtcrt = [];
+                                while (txtcrt = regex.exec(txtval[j])) {
+                                    if (s == 0) {
+                                        finalcrt[s] = txtcrt['input'].replace(`{{${txtcrt[1]}}}`, txtcrt[0].replace(txtcrt[0], eval(txtcrt[1])))
+                                    } else {
+                                        finalcrt[s] = finalcrt[s - 1].replace(`{{${txtcrt[1]}}}`, txtcrt[0].replace(txtcrt[0], eval(txtcrt[1])))
                                     }
 
-                                    finalval = finalval == `` ? custom[j] : finalval;
-
-                                    middlebuild += custom[j] == false ? `<td>${eval("array['data'][i]." + value[j] + "")}</td>` :
-                                        `<td>${finalval}</td>`
-
-                                } else {
-                                    middlebuild += `<td>${eval("array['data'][i]." + value[j] + "")}</td>`
+                                    finalval = finalcrt[s]
+                                    s++
                                 }
+
+                                finalval = finalval == `` ? custom[j] : finalval;
+
+                                middlebuild += custom[j] == false ? `<td>${eval("array['data'][i]." + value[j] + "")}</td>` :
+                                    `<td>${finalval}</td>`
+
+                            } else {
+                                middlebuild += `<td>${eval("array['data'][i]." + value[j] + "")}</td>`
                             }
-                            var single_edit = `<button data-id="${array['data'][i].id}" data-action="edit" class="btn btn-xs btn-success btn-icon-text ${id}-edit">Edit</button>`
-                            var single_delete = `<button data-id="${array['data'][i].id}" data-action="del" class="btn btn-xs btn-danger btn-icon-text ${id}-del">Delete</button>`
-                            var act_single = (action.editsingle != null && action.editsingle == false) && (action.delsingle != null && action.delsingle == false) ? `` : `<td> ${(action.editsingle!=null && action.editsingle==false?``:`${single_edit}`)} ${(action.delsingle!=null && action.delsingle==false?``:`${single_delete}`)} </td>`
+                        }
+                        var single_edit = `<button data-id="${array['data'][i].id}" data-action="edit" class="btn btn-xs btn-success btn-icon-text ${id}-edit">Edit</button>`
+                        var single_delete = `<button data-id="${array['data'][i].id}" data-action="del" class="btn btn-xs btn-danger btn-icon-text ${id}-del">Delete</button>`
+                        var act_single = (action.editsingle != null && action.editsingle == false) && (action.delsingle != null && action.delsingle == false) ? `` : `<td> ${(action.editsingle!=null && action.editsingle==false?``:`${single_edit}`)} ${(action.delsingle!=null && action.delsingle==false?``:`${single_delete}`)} </td>`
             content += middlebuild    
             content += `${act_single}
             </tr>`; 
@@ -292,7 +292,7 @@ function search_value(id){
     for (var pair of formData.entries()) {
         if(pair[1]!=''){
             var val = encodeURIComponent(XmlEntities.encodeNonUTF(pair[1]));
-            fval += `${pair[0]},`;    
+            fval += `${pair[0]},`;
             sval += `${val},`;
         }
         i++;
@@ -306,6 +306,7 @@ function search_value(id){
 
 $.table = function(id,router,load,urldel,redit,csrc){
 
+    $.checking();
     const limit = 10
     var limit_page = '?per_page=' + limit;
     $(document).ready(function() {
@@ -394,7 +395,7 @@ $.table = function(id,router,load,urldel,redit,csrc){
     })
     
     if(csrc!=``){
-        $(`#${csrc}`).find(`#${csrc}-form`).on('submit',function(e){
+        $(`#${csrc}`).on('submit',`#${csrc}-form`,function(e){
             e.preventDefault();
             var page = 1
             var limit = parseInt($( `#${id}-limit option:selected` ).val());
@@ -526,7 +527,6 @@ $.extend(Object.assign(
             </div>`
         },
         inpdate: function(title='',name='', id='', required=false, opt = {}){
-            
             var val = opt.value
 
             loadplugin[id] = {
@@ -549,9 +549,11 @@ $.extend(Object.assign(
                         </div>
                     </div>`;
         },
-        inpradiobox: function(title='',name='', id = '', required=false){
-            
-            loadplugin[name] = {
+        inpradiobox: function(title='',name='', id = '', required=false, opt={}){
+
+            var val = opt.value
+
+            loadplugin[id] = {
                 inpradiobox:{
                     id:id,
                     name:name,
@@ -559,15 +561,26 @@ $.extend(Object.assign(
                     required:required
                 }
             }
-            
-            return `                
-            <div class="form-check">
-              <label class="form-check-label">
-                <input type="radio" name="${name}" id="${id}" value="${id}" class="form-check-input">
-                ${title}
-              </label>
-              <div id="${id}-error"></div>
-            </div>`
+
+            if(opt.option){
+                var option = opt.option
+                var html_opt = `<div class="form-group"><label>${title}</label>`;
+                option.map(function(v,k){
+                    var valinp = v.value!=null?`value="${v.value}"`:``
+                    var checked = val==v.value?`checked`:``
+                    html_opt += `
+                       <div class="form-check">
+                          <label class="form-check-label">
+                            <input type="radio" name="${name}" id="${id}${k+1}" ${valinp} class="form-check-input" ${checked}>
+                            ${v.name}
+                          </label>
+                        </div> 
+                    `;
+                })
+                html_opt += `<div id="${id}-error"></div></div>`;
+            }
+
+            return html_opt;
         },
         inpselect2: function(title='',name='',id='', required=false, opt={}) {
 
@@ -1068,10 +1081,30 @@ $.resetinp = function(id,loadplugin=[],act){
     })
 }
 
-$.loadValid = function(id,api,loadplugin=[],act,input){
+$.loadValid = async function(id,loadplugin=[],opt = {}){
 
-    var base_id = id
+
+    const act = opt.rest
+    const vue = opt.vue
+    const action = opt.action
+    const data_id = act.id?act.id:null
+
+    var api = ``;
+    if(action!=false){
+        switch(action){
+            case 'add':
+                api = act.api
+            break;
+            
+            case 'edit':
+                api = data_id==null?`${act.api}?id=${vue.$route.params.id}`:`${act.api}?id=${data_id}`
+            break;
+        }
+    }
+
+    var base_id = `${id}`
     var id = `${id}-form`
+
     var rules = {} 
     var messages = {} 
     var ignore = `` 
@@ -1102,187 +1135,232 @@ $.loadValid = function(id,api,loadplugin=[],act,input){
 
     $.validator.setDefaults({
         submitHandler: async function() {
-            $('#loading-submit').show();
-            $('#loading-action').hide();
+            var checking = await $.checking()
+            if(checking==true){
+                $('#loading-submit').show();
+                $('#loading-action').hide();
 
-            var file = {}
-            var name = {}
-            let myForm = document.getElementById(id);
-            var idprogress = id.replace(`-form`, `-progress`)
-            const formImg = new FormData();
-            const formFile = new FormData();
-            const formInput = new FormData();
-            const formData = new FormData(myForm);
+                var file = {}
+                var name = {}
+                let myForm = document.getElementById(id);
+                var idprogress = id.replace(`-form`, `-progress`)
+                const formImg = new FormData();
+                const formFile = new FormData();
+                const formInput = new FormData();
+                const formData = new FormData(myForm);
 
-            var i = 0
-            var existform = {}
-            $.each(loadplugin, function( key, val) {
-                $.each(val, function( key1, val1) {
-                    if(val1.type=='image' || val1.type=='file'){
-                        if(formData.get(key).name!=''){
-                            var getsplit = formData.get(key).name.split(".")
-                            var type = getsplit[getsplit.length-1].toLowerCase()
-                            var namefile = parseInt(moment().format('YYYYMMDDHHmmss'))+(i*3)
-                            var newname = `${namefile}.${type}`
+                var i = 0
+                var existform = {}
+                $.each(loadplugin, function( key, val) {
+                    $.each(val, function( key1, val1) {
+                        if(val1.type=='image' || val1.type=='file'){
+                            if(formData.get(key).name!=''){
+                                var getsplit = formData.get(key).name.split(".")
+                                var type = getsplit[getsplit.length-1].toLowerCase()
+                                var namefile = parseInt(moment().format('YYYYMMDDHHmmss'))+(i*3)
+                                var newname = `${namefile}.${type}`
 
-                            formImg.append(`${newname}-file`, formData.get(key));
-                            formImg.append(`${newname}-name`, newname);
-                            formImg.append(`${newname}-path`, val1.path);
+                                formImg.append(`${newname}-file`, formData.get(key));
+                                formImg.append(`${newname}-name`, newname);
+                                formImg.append(`${newname}-path`, val1.path);
 
-                            formInput.append(key,newname);
+                                formInput.append(key,newname);
+                                
+                                existform[key] = key
 
-                            existform[key] = key
+                            }
+                        }else{
+                            var type = key1.replace('inp', '')
+                            var newval;
+                            switch(type){
+                                case "ckeditor":
+                                    newval = formData.get(key)
+                                    formInput.append(key,newval);
+                                    
+                                    existform[key] = key
+
+                                break;
+
+                                case "currency":
+                                    var str = formData.get(key)
+                                    var nominal = (str.replace("Rp ", "")).replace(",00", "").replace(/\./g, "");
+                                    newval = isNaN(parseInt(nominal))?"":parseInt(nominal);
+                                    formInput.append(key,newval);
+                                    existform[key] = key
+                                break;
+
+                                case "radiobox":
+                                    newval = XmlEntities.encodeNonUTF(formData.get(key))
+                                    formInput.append(key,newval);
+                                    existform[key] = key
+                                break;
+
+                                /*default:
+                                    newval = XmlEntities.encodeNonUTF(formData.get(key))
+                                    formInput.append(key,newval);
+
+                                    existform[key] = key
+                                break;*/
+                            }
                         }
-                    }else{
-                        var type = key1.replace('inp', '')
-                        var newval;
+                        
+                    })
+                    i++;
+                })
 
-                        switch(type){
-                            case "ckeditor":
-                                newval = formData.get(key)
-                                formInput.append(key,newval);
-                                existform[key] = key
-                            break;
-                            
-                            case "currency":
-                                var str = formData.get(key)
-                                var nominal = (str.replace("Rp ", "")).replace(",00", "").replace(".", "");
-                                newval = isNaN(parseInt(nominal))?"":parseInt(nominal);
-                                formInput.append(key,newval);
-                                existform[key] = key
-                            break;
-
-                            case "radiobox":
-                                newval = XmlEntities.encodeNonUTF(formData.get(val1.name))
-                                formInput.append(val1.name,newval);
-                                existform[key] = key
-                            break;
-
-                            // default:
-                            //     newval = XmlEntities.encodeNonUTF(formData.get(key))
-                            //     formInput.append(key,newval);
-                            // break;
+                for (var pair of formData.entries()) {
+                    if(existform[pair[0]]==null){
+                        var newval = XmlEntities.encodeNonUTF(pair[1])
+                        if(newval!=''){
+                            formInput.append(pair[0],newval);
                         }
+                    }
+                }
+
+                const aind = {
+                  'Authorization': token
+                }
+
+                const data = await axios.post(api, formInput, {headers: aind});
+
+                var act = opt;
+                var status;
+                var msg;
+                switch(data.data.status){
+                    case 200:
+                        status = `success`;
+                        msg = `Input data success`;
+                    break;
+
+                    case 403:
+                        status = `danger`;
+                        msg = `Sorry, Data can\'t insert`;
+                    break;
+                }
+                msg = act.msg==true?data.data.msg:msg
+                
+                var getsize = 0
+                var getsize1 = 0
+                var getsize2 = 0
+                const formImg1 = new FormData();
+                for (var pair of formImg.entries()) {
+                    $.each(data.data.allowimg,function(key, val){
+                        var checking = pair[0].indexOf(val)>-1?true:false
+                        if(checking==true){
+                            var name = `${pair[0].replace(`${val}-`, ``)}[]`
+                            formImg1.append(name, pair[1]);
+                            if(pair[0].replace(`${val}-`, ``)=='file'){
+                                getsize1 += pair[1].size;
+                                getsize += pair[1].size;
+                            }
+                        }
+                    })                    
+                }
+
+                const formFile1 = new FormData();
+                for (var pair of formFile.entries()) {
+                    $.each(data.data.allowfile,function(key, val){
+                        var checking = pair[0].indexOf(val)>-1?true:false
+                        if(checking==true){
+                            var name = `${pair[0].replace(`${val}-`, ``)}[]`
+                            formFile1.append(name, pair[1]);
+                            if(pair[0].replace(`${val}-`, ``)=='file'){
+                                getsize2 += pair[1].size;
+                                getsize += pair[1].size;
+                            }
+                        }
+                    })                    
+                }
+
+                if(getsize == 0){
+                    $(`#${idprogress}`).html(`<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>`)
+                }
+
+                if(status==`success`){
+                    var step = 0
+                    var size1 = 0
+                    var pl1 = 0
+                    if(getsize1>0){
+                        const aimg = {
+                          'Content-Type': 'application/json; charset=utf-8',
+                          'Authorization': data.data.authimg,
+                        }
+                        const dataimg = await axios.post(
+                        rest["uploadimg"],
+                        formImg1,
+                        {
+                            headers: aimg,
+                            onUploadProgress: function(progressEvent) {
+                            size1 = progressEvent.total-getsize1;
+                            var allsize = getsize+size1
+                            pl1 = progressEvent.loaded
+                            var percentCompleted = Math.round( (progressEvent.loaded * 100) / allsize );
+                                step = Math.ceil(percentCompleted)
+                                $(`#${idprogress}`).html(`<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: ${step}%;" aria-valuenow="${step}" aria-valuemin="0" aria-valuemax="100">${step}%</div>`)
+                            }
+                        });
                     }
                     
-                })
-                i++;
-            })
-
-            for (var pair of formData.entries()) {
-                if(existform[pair[0]]==null){
-                    var newval = XmlEntities.encodeNonUTF(pair[1])
-                    formInput.append(pair[0],newval);
-                }
-            }
-
-            const aind = {
-              'Authorization': token
-            }
-
-            const data = await axios.post(api, formInput, {headers: aind});
-
-            var getsize = 0
-            var getsize1 = 0
-            var getsize2 = 0
-            const formImg1 = new FormData();
-            for (var pair of formImg.entries()) {
-                $.each(data.data.allowimg,function(key, val){
-                    var checking = pair[0].indexOf(val)>-1?true:false
-                    if(checking==true){
-                        var name = `${pair[0].replace(`${val}-`, ``)}[]`
-                        formImg1.append(name, pair[1]);
-                        if(pair[0].replace(`${val}-`, ``)=='file'){
-                            getsize1 += pair[1].size;
-                            getsize += pair[1].size;
+                    var newstep = 0
+                    if(getsize2>0){
+                        const afile = {
+                          'Content-Type': 'application/json; charset=utf-8',
+                          'Authorization': data.data.authfile,
                         }
+                        const datafile = await axios.post(rest["uploadfile"], formFile1, {
+                            headers: afile,
+                            onUploadProgress: function(progressEvent) {
+
+                            var size2 = progressEvent.total-getsize2;
+                            var allsize = getsize+size2+size1
+                            var percentCompleted = Math.round( (progressEvent.loaded * 100) / allsize );
+                                newstep = step+Math.ceil(percentCompleted)
+                                $(`#${idprogress}`).html(`<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: ${newstep}%;" aria-valuenow="${newstep}" aria-valuemin="0" aria-valuemax="100">${newstep}%</div>`)
+                            }
+                        });
                     }
-                })                    
-            }
-
-            const formFile1 = new FormData();
-            for (var pair of formFile.entries()) {
-                $.each(data.data.allowfile,function(key, val){
-                    var checking = pair[0].indexOf(val)>-1?true:false
-                    if(checking==true){
-                        var name = `${pair[0].replace(`${val}-`, ``)}[]`
-                        formFile1.append(name, pair[1]);
-                        if(pair[0].replace(`${val}-`, ``)=='file'){
-                            getsize2 += pair[1].size;
-                            getsize += pair[1].size;
-                        }
-                    }
-                })                    
-            }
-
-            if(getsize == 0){
-                $(`#${idprogress}`).html(`<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">100%</div>`)
-            }
-
-            var step = 0
-            var size1 = 0
-            var pl1 = 0
-            if(getsize1>0){
-                const aimg = {
-                  'Content-Type': 'application/json; charset=utf-8',
-                  'Authorization': data.data.authimg,
                 }
-                const dataimg = await axios.post(
-                rest["uploadimg"],
-                formImg1,
-                {
-                    headers: aimg,
-                    onUploadProgress: function(progressEvent) {
-                    size1 = progressEvent.total-getsize1;
-                    var allsize = getsize+size1
-                    pl1 = progressEvent.loaded
-                    var percentCompleted = Math.round( (progressEvent.loaded * 100) / allsize );
-                        step = Math.ceil(percentCompleted)
-                        $(`#${idprogress}`).html(`<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: ${step}%;" aria-valuenow="${step}" aria-valuemin="0" aria-valuemax="100">${step}%</div>`)
+
+                $('#loading-submit').hide();
+                $('#loading-action').show();
+                
+                var alrt = `<div class="alert alert-icon-${status}" role="alert">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                              ${msg}
+                              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>`
+
+
+                if(( opt.action=='add' || opt.action=='edit') && status==`success`){
+                    switch(opt.action){
+                        case 'add':
+                            var form = await opt.form()
+                            $(`#${base_id}`).inputForm(opt,form,function(){
+                                $(`#loc-alert`).html(alrt);
+                                $('html, body').animate({
+                                    scrollTop: $(".page-content").offset().top-60
+                                }, 500);
+                            });
+                        break;
+
+                        case 'edit':
+                            $(`#loc-alert`).html(alrt);
+                            $('html, body').animate({
+                                scrollTop: $(".page-content").offset().top-60
+                            }, 500);
+                        break;
                     }
-                });
-            }
-            
-            var newstep = 0
-            if(getsize2>0){
-                const afile = {
-                  'Content-Type': 'application/json; charset=utf-8',
-                  'Authorization': data.data.authfile,
+                    
+                }else{
+                    $(`#loc-alert`).html(alert);
+                    
+                    $('html, body').animate({
+                        scrollTop: $(".page-content").offset().top-60
+                    }, 500);
                 }
-                const datafile = await axios.post(rest["uploadfile"], formFile1, {
-                    headers: afile,
-                    onUploadProgress: function(progressEvent) {
-
-                    var size2 = progressEvent.total-getsize2;
-                    var allsize = getsize+size2+size1
-                    var percentCompleted = Math.round( (progressEvent.loaded * 100) / allsize );
-                        newstep = step+Math.ceil(percentCompleted)
-                        $(`#${idprogress}`).html(`<div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" role="progressbar" style="width: ${newstep}%;" aria-valuenow="${newstep}" aria-valuemin="0" aria-valuemax="100">${newstep}%</div>`)
-                    }
-                });
             }
-
-            if(act.action=='add' || act.action!=''){
-                $.resetinp(id,loadplugin);
-            }
-
-            $('#loading-submit').hide();
-            $('#loading-action').show();
-
-            $(`#${base_id}`).empty();
-            $(`#${base_id}`).createForm(act,input)
-
-            $(`#loc-alert`).html(`<div class="alert alert-icon-success" role="alert">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-alert-circle"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-              Input data success
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>
-            </div>`);
-
-            $('html, body').animate({
-                scrollTop: $(".page-content").offset().top-60
-            }, 500);
         }
     });    
 
@@ -1299,28 +1377,37 @@ $.loadValid = function(id,api,loadplugin=[],act,input){
       highlight: function(element, errorClass) {
       }
     });
+
 }
 
-$.fn.createForm = async function(act,input=[]){
+$.fn.inputForm = async function(opt,input=[],alrt){
 
-    const action = act.action
+    const act = opt;
+    const api = opt.rest
+    const action = opt.action
     const vue = act.vue
-    const id = act.id?act.id:null
+    const msg = act.msg?true:false
 
-    var api = ``
-    var acttext = ``
-    if(action=='add'){
-        acttext = 'Add'
-        api = act.api
-    }else if(action=='edit'){
-        acttext = 'Edit'
-        api = id==null?`${act.api}?id=${vue.$route.params.id}`:`${act.api}?id=${id}`
-    }else if(action=='search'){
-        acttext = 'Search';
-    }else{
-        acttext = action
-        api = act.api
-    }
+        var acttext = ``
+        if(action!=false){
+            switch(action){
+                case 'add':
+                    acttext = 'Add'
+                break;
+                
+                case 'edit':
+                    acttext = 'Edit'
+                break;
+                
+                case 'search':
+                    acttext = 'Search';
+                break;
+            }
+        }
+
+        if(act.textaction){
+            acttext = act.textaction
+        }
     
         const back = act.back==false?false:act.back
         const reset = act.reset==true?true:false
@@ -1340,19 +1427,18 @@ $.fn.createForm = async function(act,input=[]){
                 </div>
             </div>
             <div id="loading-action" style="display:show;">
-                <button type="submit" id="${$(this).attr('id')}-submit" class="btn btn-primary mr-2">${acttext}</button>
+                ${(action!=false?`<button type="submit" id="${$(this).attr('id')}-submit" class="btn btn-primary mr-2">${acttext}</button>`:``)}
                 ${(reset==true?`<button id="${$(this).attr('id')}-reset" class="btn btn-danger">Reset</button>`:``)}
                 ${(back==false?``:`<button id="${$(this).attr('id')}-back"class="btn btn-light">Cancel</button>`)}
             </div>
         </form>`
-        $(`#${$(this).attr('id')}`).on('click', `#${$(this).attr('id')}-back`, async function(e) {
-            e.preventDefault();
-            if(back!=null){
-                vue.$router.push({name: `${back}`});
-            }
-        })
+        
         $(this).html(formCreate);        
         $.loadplugin(loadplugin,action);
+        
+        if(opt.onFunction) opt.onFunction()
+        
+        alrt();
 
         var idx = $(this).attr('id')
         $(`#${idx}`).find(`#${idx}-form #${idx}-reset`).on('click',function(e){
@@ -1361,14 +1447,74 @@ $.fn.createForm = async function(act,input=[]){
             $(`#${idx}`).find(`#${idx}-form #${idx}-submit`).submit();
         })
 
-    if(action!='search'){
-        var idx = $(this).attr('id')
-        $.loadValid(idx,api,loadplugin,act,input);
+    if(action!=false){
+        switch(action){
+            case 'add':            
+            case 'edit':
+                $.loadValid(`${$(this).attr('id')}`,loadplugin,opt);
         
-        $(`#${idx}`).on('submit',`#${$(this).attr('id')}-form`, function(e){
-            e.preventDefault();
-            $.loadValid(idx,api,loadplugin,act,input);
-        })
+                $(`#${$(this).attr('id')}`).on('submit', async function(e){
+                    e.preventDefault();
+                    $.loadValid($(this).attr('id'),loadplugin,opt);
+                })
+            break;
+        }
     }
 }
+
+
+$.fn.createForm = async function(opt={}){
+
+    var api = opt.rest
+
+    if(opt.action!='search'){
+        $.checking();
+    }
+
+    switch(opt.action){
+        case 'search':
+            $.checking();
+        break;
+
+        case 'edit':
+            var datas = await axios.get(api.databyid);
+        break;
+    }
+
+    var datas = datas?datas:[]
+    var form = await opt.form(datas);
+
+    const vue = opt.vue
+    const back = opt.back==false?false:opt.back
+
+    $(`#${$(this).attr('id')}`).inputForm(opt,form,function(){});
+    
+    $(`#${$(this).attr('id')}`).on('click', `#${$(this).attr('id')}-back`, async function(e) {
+        e.preventDefault();
+        if(back!=null){
+            vue.$router.push({path: `/${back}`});
+        }
+    })
+}
+
+
 });
+
+$.checking = async function(){
+    var token = localStorage.getItem('token');
+    if(token!=null){
+        const auth = await axios.get(rest["checking"],{
+            headers: {
+               Authorization: token
+            }
+        });
+        var active = auth.data.active;
+        
+        if(active==false){
+            localStorage.removeItem('token');
+            location.reload();
+        }else{
+            return true
+        }
+    }
+}

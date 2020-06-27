@@ -200,7 +200,7 @@ exports.edit = function(req, res, resp, conn) {
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0) {
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))

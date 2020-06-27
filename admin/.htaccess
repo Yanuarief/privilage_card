@@ -11,5 +11,5 @@
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /member/index.html [L]
+  RewriteRule . /project/june_2020/2006_privilage_card/admin/index.html [L]
 </IfModule>

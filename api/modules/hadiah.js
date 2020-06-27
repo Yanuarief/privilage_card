@@ -84,6 +84,20 @@ exports.byid = function(req, res, resp, conn, baseurl) {
                     ON A.id_paket = B.id_paket
         ${where};`;
 
+    var where1 = `WHERE id = '${id}'`;
+    var main_qry1 = `SELECT * FROM ${table[1]} ${where1};`;
+
+    var where2 = `WHERE id_paket = '${id}'`;
+    var main_qry2 = `SELECT * FROM hadiah;`;
+
+    conn.query(` ${main_qry2}`, function(error, rows, fields) {
+        if (error) {
+            console.log(error)
+        } else {
+            console.log(rows);
+        }
+    });
+
     conn.query(` ${main_qry}`, function(error, rows, fields) {
         if (error) {
             console.log(error)
@@ -94,7 +108,6 @@ exports.byid = function(req, res, resp, conn, baseurl) {
             var urutan = []
             var stock = []
             var terpakai = [];
-
             datas.forEach(function(item, index, arr) {
                 id_hadiah.push(item.id_hadiah)
                 nama.push(item.nama_hadiah)
@@ -133,7 +146,7 @@ exports.add = function(req, res, resp, conn) {
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0) {
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -192,7 +205,7 @@ exports.edit = function(req, res, resp, conn) {
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0 && id != null) {
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -226,8 +239,6 @@ exports.edit = function(req, res, resp, conn) {
 
                     conn.query(`INSERT INTO ${table[0]} SET ?`, post2)
                 }
-
-
             });
 
             items["data"] = post1;
@@ -247,7 +258,7 @@ exports.del = function(req, res, resp, conn) {
 
     const auth = req.headers.authorization
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0) {
             conn.query(`DELETE FROM ${table[0]} WHERE id_paket = ${inp.id};
             DELETE FROM ${table[1]} WHERE id_paket = ${inp.id};`);

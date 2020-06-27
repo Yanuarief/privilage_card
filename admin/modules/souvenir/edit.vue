@@ -22,48 +22,49 @@ module.exports = {
 	methods: {
 	},
 	mounted: async function(){
-        const edit = await axios.get(rest["souvenirbyid"] + `?id=${this.$route.params.id}`);
-		var datas = edit.data.data;
-
         var vue = this
-		var act = {
-			api: rest["editsouvenir"],
+        $('#form-souvenir').createForm({
 			vue: vue,
 			action: 'edit',
-			back: 'souvenir'
-		}
-
-		$('#form-souvenir').createForm(act,
-		[
-			$.inpimage('Image', 'image', 'image',true, {
-                path: 'souvenir',
-                accept: ['jpg','png','jpeg'],
-                height: 250,
-                width: 250,
-                value: datas.foto.large
-			   }),
-            $.inptext('Nama Souvenir','namaSouvenir','namaSouvenir',true,{
-                placeholder: 'Nama Souvenir',
-                value: datas.souvenir
-            }),
-            $.inptext('Harga','harga','harga',true,{
-				placeholder: 'Harga',
-                value: datas.harga
-            }),
-            $.inptext('Point','point','point',true,{
-				placeholder: 'Point',
-                value: datas.point
-            }),
-            $.inptext('Stock','stock','stock',true,{
-				placeholder: 'Stock',
-                value: datas.stock
-            }),
-            $.inptextarea('Keterangan','keterangan','keterangan',true,{
-                placeholder: 'Keterangan',
-                value: datas.keterangan
-            }),
+			rest:{
+				api: rest["editsouvenir"],
+				databyid: `${rest["souvenirbyid"]}?id=${vue.$route.params.id}`
+			},
+			back: 'souvenir',
+			form(datas){
+            	var datas = datas.data.data;
+				return [
+					$.inpimage('Image', 'image', 'image',true, {
+		                path: 'souvenir',
+		                accept: ['jpg','png','jpeg'],
+		                height: 250,
+		                width: 250,
+		                value: datas.foto.large
+					   }),
+		            $.inptext('Nama Souvenir','namaSouvenir','namaSouvenir',true,{
+		                placeholder: 'Nama Souvenir',
+		                value: datas.souvenir
+		            }),
+		            $.inptext('Harga','harga','harga',true,{
+						placeholder: 'Harga',
+		                value: datas.harga
+		            }),
+		            $.inptext('Point','point','point',true,{
+						placeholder: 'Point',
+		                value: datas.point
+		            }),
+		            $.inptext('Stock','stock','stock',true,{
+						placeholder: 'Stock',
+		                value: datas.stock
+		            }),
+		            $.inptextarea('Keterangan','keterangan','keterangan',true,{
+		                placeholder: 'Keterangan',
+		                value: datas.keterangan
+		            }),
+		        ]
+			}
             
-        ]);
+        })
 	}
 };
 </script>

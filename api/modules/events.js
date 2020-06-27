@@ -50,8 +50,8 @@ exports.lists = function(req, res, resp, conn, opt = {}) {
 
     var limit = ` LIMIT ${page},${per_page} `;
 
-    var body_qry = `riv_${table} a
-        INNER JOIN riv_floormaps b ON a.floor_codes = b.id`
+    var body_qry = `${table} a
+        INNER JOIN floormaps b ON a.floor_codes = b.id`
 
     var main_qry = `SELECT 
         a.*, b.floormaps, b.id as id_fmaps, b.code_maps
@@ -145,15 +145,15 @@ exports.byid = function(req,res,resp,conn,baseurl){
     var main_qry = `SELECT 
         a.*, a.location,b.floormaps, b.id as id_fmaps, b.code_maps
         FROM 
-        riv_` + table + ` a
-        INNER JOIN riv_floormaps b ON a.floor_codes = b.id
+        ` + table + ` a
+        INNER JOIN floormaps b ON a.floor_codes = b.id
         ` + where + `
         ORDER BY id DESC
         ` + limit + `;`;
 
     conn.query(` ` + main_qry + `
-        SELECT COUNT(*) as sum FROM riv_` + table + ` a
-        INNER JOIN riv_floormaps b ON a.floor_codes = b.id ` + where + ` limit 1;
+        SELECT COUNT(*) as sum FROM ` + table + ` a
+        INNER JOIN floormaps b ON a.floor_codes = b.id ` + where + ` limit 1;
         `, [1, 2],  function (error, rows, fields){
         if(error){
             console.log(error)
@@ -228,7 +228,7 @@ exports.add = function(req,res,resp,conn){
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
         if(rows.length>0){
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -253,7 +253,7 @@ exports.add = function(req,res,resp,conn){
                 post["end_date"] = inp.end_date
                 post["created_date"] = datenow
 
-            conn.query(`INSERT INTO riv_` + table + ` SET ?`, post);
+            conn.query(`INSERT INTO ` + table + ` SET ?`, post);
             
             var items = {};
                 items["data"] = post;
@@ -282,7 +282,7 @@ exports.edit = function(req,res,resp,conn){
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
         if(rows.length>0 && id!=null){
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -313,7 +313,7 @@ exports.edit = function(req,res,resp,conn){
                     items["allowimg"] = Array(inp.image)
                 }
 
-            conn.query(`UPDATE riv_${table} SET ? ${where}`, post);
+            conn.query(`UPDATE ${table} SET ? ${where}`, post);
             
                 items["data"] = post;
                 items["status"] = 200;
@@ -336,9 +336,9 @@ exports.del = function(req,res,resp,conn){
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
         if(rows.length>0){
-            conn.query(`DELETE FROM riv_${table} WHERE id=${inp.id}`);
+            conn.query(`DELETE FROM ${table} WHERE id=${inp.id}`);
                 items["msg"] = "Delete Successfully!!"; 
                 items["status"] = 200;
             resp.ok(items,res);

@@ -4,7 +4,7 @@ var con = mysql.createConnection({
     host: "localhost",
     user: "root",
     password: "mysql",
-    database: "cms_baru",
+    database: "2006_privilage_card",
     charset: 'utf8mb4',
     multipleStatements: true
 });

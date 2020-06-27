@@ -1,5 +1,4 @@
 import { login } from './login/index.js'
-import { home } from './home/index.js'
 import { events } from './events/index.js'
 import { promo } from './promo/index.js'
 import { tenant } from './tenant/index.js'
@@ -25,7 +24,6 @@ var page = []
 
 page = page.concat(
     login,
-    home,
     events,
     promo,
     tenant,

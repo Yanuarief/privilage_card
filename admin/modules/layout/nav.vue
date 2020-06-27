@@ -5,7 +5,7 @@
         </a>
         <div class="navbar-content">
             <div class="part-title">
-                <h5 class="title-events">Jogja City Mall - Official Website</h5>
+                <h5 class="title-events">Privilege Card - Official Website</h5>
             </div>
             <ul class="navbar-nav">
                 <!-- <li class="nav-item dropdown nav-apps">
@@ -14,21 +14,23 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="appsDropdown">
                         <div class="dropdown-header d-flex align-items-center justify-content-between">
-                            <p class="mb-0 font-weight-medium">List Category Events</p>
+                            <p class="mb-0 font-weight-medium">Web Apps</p>
+                            <a href="javascript:;" class="text-muted">Edit</a>
                         </div>
                         <div class="dropdown-body">
-                            <div class="d-flex align-items-center apps" id="catvents">
-                                <a v-for="(item, index) in info" :key="item.id" href="#" v-bind:data-id="item.id" v-bind:data-name="item.name">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-grid icon-lg"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg><p v-html="item.name"></p>
-                                </a>
+                            <div class="d-flex align-items-center apps">
+                                <a href="apps/chat.html"><i data-feather="message-square" class="icon-lg"></i><p>Chat</p></a>
+                                <a href="apps/calendar.html"><i data-feather="calendar" class="icon-lg"></i><p>Calendar</p></a>
+                                <a href="email/inbox.html"><i data-feather="mail" class="icon-lg"></i><p>Email</p></a>
+                                <a href="general/profile.html"><i data-feather="instagram" class="icon-lg"></i><p>Profile</p></a>
                             </div>
                         </div>
                         <div class="dropdown-footer d-flex align-items-center justify-content-center">
                             <a href="javascript:;">View all</a>
                         </div>
                     </div>
-                </li> -->
-                <!-- <li class="nav-item dropdown nav-messages">
+                </li>
+                <li class="nav-item dropdown nav-messages">
                     <a class="nav-link dropdown-toggle" href="#" id="messageDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i data-feather="mail"></i>
                     </a>
@@ -170,21 +172,21 @@
                 </li> -->
                 <li class="nav-item dropdown nav-profile">
                     <a class="nav-link dropdown-toggle" href="#" id="profileDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img src="assets/images/faces/face1.jpg" alt="profile">
+                        <i data-feather="user"></i>
                     </a>
                     <div class="dropdown-menu" aria-labelledby="profileDropdown">
                         <div class="dropdown-header d-flex flex-column align-items-center">
                             <div class="figure mb-3">
-                                <img src="assets/images/faces/face1.jpg" alt="">
+                                <img src="assets/images/logo5.png" alt="">
                             </div>
                             <div class="info text-center">
-                                <p class="name font-weight-bold mb-0">Amiah Burton</p>
-                                <p class="email text-muted mb-3">amiahburton@gmail.com</p>
+                                <p class="name font-weight-bold mb-0">Administrator</p>
+                                <br>
                             </div>
                         </div>
                         <div class="dropdown-body">
                             <ul class="profile-nav p-0 pt-3">
-                                <li class="nav-item">
+                                <!-- <li class="nav-item">
                                     <a href="general/profile.html" class="nav-link">
                                         <i data-feather="user"></i>
                                         <span>Profile</span>
@@ -201,9 +203,9 @@
                                         <i data-feather="repeat"></i>
                                         <span>Switch User</span>
                                     </a>
-                                </li>
+                                </li> -->
                                 <li class="nav-item">
-                                    <a href="javascript:;" class="nav-link">
+                                    <a href="#" v-on:click="aps($event)" class="nav-link">
                                         <i data-feather="log-out"></i>
                                         <span>Log Out</span>
                                     </a>
@@ -221,26 +223,17 @@
 module.exports = {
     data(){
         return {
-          info: []
         }
     },
-    mounted: async function(){
-        /*var rou = this.$router
-        const urlcat = rest['categoryEvents']
-        const response = await axios.get(urlcat);
-        this.info = response.data.data
-        
-        $('#catvents').on('click','a',function(e){
+    methods: {
+        aps : function(e){
             e.preventDefault();
-            var id = $(this).data('id');
-            var name = $(this).data('name');
-            var set_events = {
-                id:id,
-                name:name
-            }
-            localStorage.setItem("set_events", JSON.stringify(set_events));
+            localStorage.removeItem('token')
             location.reload();
-        });*/
+        },
+    },
+    mounted(){
+
     }
 };
 </script>

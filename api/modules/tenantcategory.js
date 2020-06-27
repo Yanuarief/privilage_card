@@ -38,7 +38,7 @@ exports.lists = function(req, res, resp, conn, opt = {}){
 
     var limit = ` LIMIT ${page},${per_page} `;
 
-    var body_qry = ` riv_${table} `
+    var body_qry = ` ${table} `
 
     var main_qry = `SELECT 
         *
@@ -98,13 +98,13 @@ exports.byid = function(req,res,resp,conn,baseurl){
 
     var limit = ` LIMIT ${page}, ${per_page} `;
     var main_qry = `SELECT * FROM 
-        riv_${table}
+        ${table}
         ${where}
         ORDER BY name_category ASC
         ${limit};`;
 
     conn.query(` ${main_qry}
-        SELECT COUNT(*) as sum FROM riv_${table}
+        SELECT COUNT(*) as sum FROM ${table}
         ${where} limit 1;
         `, [1, 2],  function (error, rows, fields){
         if(error){
@@ -147,14 +147,14 @@ exports.add = function(req,res,resp,conn){
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
         if(rows.length>0){
 
             var post  = {};
                 post["name_category"] = entities.encodeNonUTF(inp.tenantcat)
                 post["created_date"] = datenow
 
-            conn.query(`INSERT INTO riv_${table} SET ?`, post);
+            conn.query(`INSERT INTO ${table} SET ?`, post);
             
                 items["data"] = post;
                 items["status"] = 200;
@@ -180,14 +180,14 @@ exports.edit = function(req,res,resp,conn){
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
         if(rows.length>0 && id!=null){
 
             var post  = {};
                 post["name_category"] = entities.encodeNonUTF(inp.tenantcat)
                 post["created_date"] = datenow
 
-            conn.query(`UPDATE riv_${table} SET ? ${where}`, post);
+            conn.query(`UPDATE ${table} SET ? ${where}`, post);
             
                 items["data"] = post;
                 items["status"] = 200;
@@ -210,9 +210,9 @@ exports.del = function(req,res,resp,conn){
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
         if(rows.length>0){
-            conn.query(`DELETE FROM riv_${table} WHERE id=${inp.id}`);
+            conn.query(`DELETE FROM ${table} WHERE id=${inp.id}`);
                 items["msg"] = "Delete Successfully!!"; 
                 items["status"] = 200;
             resp.ok(items,res);

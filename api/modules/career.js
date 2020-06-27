@@ -22,13 +22,13 @@ exports.lists = function(resp,conn,params,res){
     var main_qry = `SELECT 
         *
         FROM 
-        riv_` + table + ` 
+        ` + table + ` 
         ORDER BY id DESC
         ` + limit + `;`;
 
 
     conn.query(` ` + main_qry + `
-        SELECT COUNT(*) as sum FROM riv_` + table + ` limit 1;
+        SELECT COUNT(*) as sum FROM ` + table + ` limit 1;
         `, [1, 2],  function (error, rows, fields){
         if(error){
             console.log(error)

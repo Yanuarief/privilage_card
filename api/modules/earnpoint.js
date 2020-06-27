@@ -147,7 +147,7 @@ exports.add = function(req, res, resp, conn) {
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0) {
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -213,9 +213,10 @@ exports.add = function(req, res, resp, conn) {
 
                             })
                             var noml = await getDatas
-                            post3['nominal'] = parseInt(noml) + parseInt(nominal)
+                            console.log(noml);
+                            /*post3['nominal'] = parseInt(noml) + parseInt(nominal)
 
-                            conn.query(`UPDATE ${table[4]} SET ? ${where1}`, post3)
+                            conn.query(`UPDATE ${table[4]} SET ? ${where1}`, post3)*/
                         }
 
                     }
@@ -250,7 +251,7 @@ exports.edit = function(req, res, resp, conn) {
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0 && id != null) {
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -299,7 +300,7 @@ exports.del = function(req, res, resp, conn) {
 
     const auth = req.headers.authorization
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0) {
             conn.query(`UPDATE ${table[0]} SET status = '0' WHERE id_bank = ${inp.id};
             UPDATE ${table[1]} SET status = '0' WHERE id_bank = ${inp.id};

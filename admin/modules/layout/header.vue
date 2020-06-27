@@ -13,7 +13,7 @@
         <div class="sidebar-body">
             <ul class="nav">
                 <li class="nav-item nav-category">Main</li>
-                <router-link tag="li" to="/home" class="nav-item">
+                <router-link tag="li" to="/" :exact="true" class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="link-icon" data-feather="home"></i>
                         <span class="link-title">Dashboard</span>

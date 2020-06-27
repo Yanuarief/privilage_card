@@ -53,14 +53,14 @@ exports.lists = async function(resp,conn,params,res,inp,files,statusCode){
     var main_qry = `SELECT 
         a.*, b.floormaps, b.id as id_fmaps, b.code_maps
         FROM 
-        riv_` + table + ` a
-        INNER JOIN riv_floormaps b ON a.floor_codes = b.id
+        ` + table + ` a
+        INNER JOIN floormaps b ON a.floor_codes = b.id
         ORDER BY id DESC
         ` + limit + `;`;*/
 
 
     /*conn.query(` ` + main_qry + `
-        SELECT COUNT(*) as sum FROM riv_` + table + ` limit 1;
+        SELECT COUNT(*) as sum FROM ` + table + ` limit 1;
         `, [1, 2],  function (error, rows, fields){
         if(error){
             console.log(error)

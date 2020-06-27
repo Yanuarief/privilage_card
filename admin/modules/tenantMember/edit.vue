@@ -22,37 +22,37 @@ module.exports = {
 	methods: {
 	},
 	mounted: async function(){
-        const edit = await axios.get(rest["tenantMemberbyid"] + `?id=${this.$route.params.id}`);
-		var datas = edit.data.data;
-
         var vue = this
-		var act = {
-			api: rest["edittenantMember"],
+        $('#form-tenantMember').createForm({
+            rest:{
+            	api: rest["edittenantMember"],
+            	databyid: rest["tenantMemberbyid"] + `?id=${vue.$route.params.id}`,
+            },
 			vue: vue,
 			action: 'edit',
-			back: 'tenantMember'
-		}
-
-		$('#form-tenantMember').createForm(act,
-		[
-			$.inptext('Nama Tenant','namaTenant','namaTenant',true,{
-                placeholder: 'Nama Tenant',
-                value: datas.tenant
-            }),
-            $.inptext('Nama Pemilik','namaPemilik','namaPemilik',true,{
-				placeholder: 'Nama Pemilik',
-                value:datas.pemilik
-            }),
-            $.inpemail('Alamat E-mail','alamatEmail','alamatEmail',false,{
-				placeholder: 'Alamat E-mail',
-                value:datas.email
-            }),
-            $.inpnumber('No. Telepon','noTelepon','noTelepon',true,{
-				placeholder: 'No. Telepon',
-                value:datas.telp
-            }),
-            
-        ]);
+			back: 'tenantMember',
+			form(datas){
+        		var datas = datas.data.data;
+				return [
+					$.inptext('Nama Tenant','namaTenant','namaTenant',true,{
+		                placeholder: 'Nama Tenant',
+		                value: datas.tenant
+		            }),
+		            $.inptext('Nama Pemilik','namaPemilik','namaPemilik',true,{
+						placeholder: 'Nama Pemilik',
+		                value:datas.pemilik
+		            }),
+		            $.inpemail('Alamat E-mail','alamatEmail','alamatEmail',false,{
+						placeholder: 'Alamat E-mail',
+		                value:datas.email
+		            }),
+		            $.inpnumber('No. Telepon','noTelepon','noTelepon',true,{
+						placeholder: 'No. Telepon',
+		                value:datas.telp
+		            }),
+		        ]
+			}
+        })
 	}
 };
 </script>

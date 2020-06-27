@@ -16,12 +16,12 @@ exports.floormaps = function(req,res,resp,conn){
     var where = ` WHERE CONCAT(floormaps, " ( ", code_maps, " ) ") LIKE '%${value}%' `
     var limit = ` LIMIT ` + page + `,` + per_page;
     var main_qry = `SELECT * FROM 
-        riv_${table} ${where}
+        ${table} ${where}
         ORDER BY order_floor DESC
         ` + limit + `;`;
 
     conn.query(` ${main_qry}
-        SELECT COUNT(*) as sum FROM riv_${table} ${where} limit 1;
+        SELECT COUNT(*) as sum FROM ${table} ${where} limit 1;
         `, [1, 2],  function (error, rows, fields){
         if(error){
             console.log(error)
@@ -66,12 +66,12 @@ exports.tenant = function(req,res,resp,conn){
     var where = ` WHERE tenant LIKE '%${value}%' `
     var limit = ` LIMIT ` + page + `,` + per_page;
     var main_qry = `SELECT * FROM 
-        riv_${table} ${where}
+        ${table} ${where}
         ORDER BY tenant ASC
         ` + limit + `;`;
 
     conn.query(` ${main_qry}
-        SELECT COUNT(*) as sum FROM riv_${table} ${where} limit 1;
+        SELECT COUNT(*) as sum FROM ${table} ${where} limit 1;
         `, [1, 2],  function (error, rows, fields){
         if(error){
             console.log(error)
@@ -116,12 +116,12 @@ exports.tenantcat = function(req,res,resp,conn){
     var where = ` WHERE name_category LIKE '%${value}%' `
     var limit = ` LIMIT ` + page + `,` + per_page;
     var main_qry = `SELECT * FROM 
-        riv_${table} ${where}
+        ${table} ${where}
         ORDER BY name_category ASC
         ` + limit + `;`;
 
     conn.query(` ${main_qry}
-        SELECT COUNT(*) as sum FROM riv_${table} ${where} limit 1;
+        SELECT COUNT(*) as sum FROM ${table} ${where} limit 1;
         `, [1, 2],  function (error, rows, fields){
         if(error){
             console.log(error)

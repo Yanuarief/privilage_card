@@ -24,46 +24,48 @@ module.exports = {
 	},
 	mounted(){
 		var vue = this
-		var act = {
-			api: rest["addhadiah"],
-			vue: vue,
-			action: 'add',
-			back: 'hadiah'
-      }
+      $('#form-input').createForm({
+            vue: vue,
+            action: 'add',
+            rest:{
+               api: rest["addhadiah"],
+            },
+            back: 'hadiah',
+            form(){
+               return [     
+                  $.inptext('Nama Paket','namaPaket','namaPaket',true,{
+                  placeholder: 'Nama Paket'
+                  }),
+                  $.html(`<div class="row" id="boxs"><div class="col-12" data-idbox="0"><div class="row"><div class="col-md-4">`),
+                  $.inptext('Nama Hadiah','namaHadiah[]','namaHadiah',true,{
+                  placeholder: 'Nama Hadiah'
+                  }),
+                  $.html(`</div>`),
+                  $.html(`<div class="col-md-3">`),
+                  $.inpnumber('Urutan','urutan[]','urutan',true,{
+                  placeholder: 'Urutan',
+                  value: 1
+                  }),
+                  $.html(`</div>`),
+                  $.html(`<div class="col-md-3">`),
+                  $.inpnumber('Jumlah','jumlah[]','jumlah',true,{
+                  placeholder: 'Jumlah',
+                  value: 1
+                  }),
+                  $.html(`</div>`),
+                  $.html(`
+                     <div class="form-group">
+                        <label>Action</label>
+                        <div class="row">
+                           <div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a></div>
+                        </div>
+                     </div>
 
-		$('#form-input').createForm(act,
-		[     $.inptext('Nama Paket','namaPaket','namaPaket',true,{
-				placeholder: 'Nama Paket'
-            }),
-            $.html(`<div class="row" id="boxs"><div class="col-12" data-idbox="0"><div class="row"><div class="col-md-4">`),
-            $.inptext('Nama Hadiah','namaHadiah[]','namaHadiah',true,{
-				placeholder: 'Nama Hadiah'
-            }),
-            $.html(`</div>`),
-            $.html(`<div class="col-md-3">`),
-            $.inpnumber('Urutan','urutan[]','urutan',true,{
-            placeholder: 'Urutan',
-            value: 1
-            }),
-            $.html(`</div>`),
-            $.html(`<div class="col-md-3">`),
-            $.inpnumber('Jumlah','jumlah[]','jumlah',true,{
-            placeholder: 'Jumlah',
-            value: 1
-            }),
-            $.html(`</div>`),
-            $.html(`
-               <div class="form-group">
-                  <label>Action</label>
-                  <div class="row">
-                     <div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a></div>
-                  </div>
-               </div>
-
-            `),
-            $.html(`</div></div></div></div>`),
-            
-      ]);
+                  `),
+                  $.html(`</div></div></div></div>`),
+               ]
+            },
+      })
       
       $("#form-input").on("click","#boxs .plus", function(e){
          e.preventDefault();
@@ -102,7 +104,6 @@ module.exports = {
 
          $(`#boxs`).append(set_id);
       })
-
       $("#form-input").on("click","#boxs .min",function(e){
          e.preventDefault();
          var idx =  parseInt($(this).data('iddel'))

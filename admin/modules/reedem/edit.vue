@@ -37,44 +37,43 @@ data() {
 },
 methods: {},
 mounted: async function(){
+
     var vue = this
     var idMember = vue.$route.params.id
-    const getData = await axios.get(rest["reedembyid"] + `?id=${idMember}`);
-    var datas = getData.data.data;
-
-    var search = [
-        $.html(`<div class="row"><div class="col-md-12"><div class="row">`),
-        $.html(`<div class="col-md-12">`),
-        $.inptext('Nama Member / No Seri Barcode','memberReedem','memberReedem',true,{
-            placeholder: 'Nama Member / No Seri Barcode',
-            value: datas.member
-        }),
-        $.inptext('Point Anda','pointAnda','pointAnda',true,{
-            placeholder: 'Point Anda',
-            value: datas.points
-        }),
-        $.html(`</div>`),
-        $.html(`<div class="col-md-6">`),
-        $.inpnumber('Minimal Point','minPoint','minPoint',true,{
-            placeholder: 'Minimal Point',
-        }),
-        $.html(`</div>`),
-        $.html(`<div class="col-md-6">`),
-        $.inpnumber('Maksimal Point','maxPoint','maxPoint',true,{
-            placeholder: 'Maksimal Point',
-        }),
-        $.html(`</div>`),
-        $.html(`</div></div></div>`),
-    ]
-
-    var act = {
-        vue: this,
+    $('#search-form-reedem').createForm({
+        vue: vue,
         action: `search`,
         back: false,
-        reset: true
-    }
-
-    $('#search-form-reedem').createForm(act,search);
+        reset: true,
+        async form(){
+            const getData = await axios.get(rest["reedembyid"] + `?id=${idMember}`);
+            var datas = getData.data.data;
+            return [
+                $.html(`<div class="row"><div class="col-md-12"><div class="row">`),
+                $.html(`<div class="col-md-12">`),
+                $.inptext('Nama Member / No Seri Barcode','memberReedem','memberReedem',true,{
+                    placeholder: 'Nama Member / No Seri Barcode',
+                    value: datas.member
+                }),
+                $.inptext('Point Anda','pointAnda','pointAnda',true,{
+                    placeholder: 'Point Anda',
+                    value: datas.points
+                }),
+                $.html(`</div>`),
+                $.html(`<div class="col-md-6">`),
+                $.inpnumber('Minimal Point','minPoint','minPoint',true,{
+                    placeholder: 'Minimal Point',
+                }),
+                $.html(`</div>`),
+                $.html(`<div class="col-md-6">`),
+                $.inpnumber('Maksimal Point','maxPoint','maxPoint',true,{
+                    placeholder: 'Maksimal Point',
+                }),
+                $.html(`</div>`),
+                $.html(`</div></div></div>`),
+            ]
+        }
+    });
 
     const router = this.$router
     const urldel = ''

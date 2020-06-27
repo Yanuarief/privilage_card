@@ -24,13 +24,13 @@ exports.lists = async function(resp,conn,params,res){
     var main_qry = `SELECT 
         *
         FROM 
-        riv_` + table + ` 
+        ` + table + ` 
         ` + where + `
         ORDER BY id DESC
         ` + limit + `;`;
 
     conn.query(` ` + main_qry + `
-        SELECT COUNT(*) as sum FROM riv_` + table + ` ` + where + ` limit 1;
+        SELECT COUNT(*) as sum FROM ` + table + ` ` + where + ` limit 1;
         `, [1, 2],  function (error, rows, fields){
         
         if(error){
@@ -58,7 +58,7 @@ exports.lists = async function(resp,conn,params,res){
                     pdf2pic.convertBulk(fileLoc, [page_number]).then((resolve) => {
                         console.log('create ' + page_number);
                         fs.readdir(pathdir, (err, files) => {
-                        	conn.query(`UPDATE riv_` + table + ` SET part_upload = ? ` + where + ` `, [files.length]);
+                        	conn.query(`UPDATE ` + table + ` SET part_upload = ? ` + where + ` `, [files.length]);
             			});
 
                         var items = {}; 
@@ -71,7 +71,7 @@ exports.lists = async function(resp,conn,params,res){
                 }else{
                     console.log('already ' + page_number);
                     fs.readdir(pathdir, (err, files) => {
-                    	conn.query(`UPDATE riv_` + table + ` SET part_upload = ? ` + where + ` `, [files.length]);
+                    	conn.query(`UPDATE ` + table + ` SET part_upload = ? ` + where + ` `, [files.length]);
             		});
 
                     var items = {}; 

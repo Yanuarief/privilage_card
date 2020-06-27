@@ -18,23 +18,23 @@ exports.favorite = function(req,res,resp,conn){
     const auth = req.headers.authorization
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
 
-    conn.query(`SELECT * FROM riv_auth WHERE auth LIKE "`+ auth +`"`,  function (error, rows, fields){
+    conn.query(`SELECT * FROM auth WHERE auth LIKE "`+ auth +`"`,  function (error, rows, fields){
         var authrow = rows[0]
         if(rows.length>0 && cat!=null && iditem!=null){
-            conn.query(`SELECT * FROM riv_favorite WHERE id_account LIKE "` + authrow.id_account + `" AND id_items LIKE "` + iditem + `"`,  function (error, rows, fields){
+            conn.query(`SELECT * FROM favorite WHERE id_account LIKE "` + authrow.id_account + `" AND id_items LIKE "` + iditem + `"`,  function (error, rows, fields){
                 var favrow = rows[0]
                 if(rows.length>0){
                     if(favrow.status!=null){
                         const status = favrow.status==0?1:0;
                         const text_stat = favrow.status==0?"Added to ":"Remove ";
-                        conn.query(`UPDATE riv_favorite SET status="` + status + `", modified_date="` + datenow + `" WHERE id_account LIKE "` + authrow.id_account + `" AND table_name LIKE "` + cat + `" AND id_items LIKE "` + iditem + `";`);
+                        conn.query(`UPDATE favorite SET status="` + status + `", modified_date="` + datenow + `" WHERE id_account LIKE "` + authrow.id_account + `" AND table_name LIKE "` + cat + `" AND id_items LIKE "` + iditem + `";`);
                         items["active"] = status;
                         items["msg"] = text_stat + "favorite!";
                         items["status"] = 200;
                         resp.ok(items,res);
                     }
                 }else{
-                    conn.query(`INSERT INTO riv_favorite SET id_account="` + authrow.id_account + `", table_name="` + cat + `", id_items="` + iditem + `", status="1", created_date="` + datenow + `";`);
+                    conn.query(`INSERT INTO favorite SET id_account="` + authrow.id_account + `", table_name="` + cat + `", id_items="` + iditem + `", status="1", created_date="` + datenow + `";`);
                     items["active"] = 1;
                     items["msg"] = "Added to favorite!";
                     items["status"] = 200;
@@ -53,7 +53,7 @@ exports.lists = function(req,res,resp,conn,params){
     var items = {};
     var auth = req.headers.authorization
     
-    conn.query(`SELECT * FROM riv_auth WHERE auth LIKE "`+ auth +`"`,  function (error, rows, fields){
+    conn.query(`SELECT * FROM auth WHERE auth LIKE "`+ auth +`"`,  function (error, rows, fields){
         var authrow = rows[0]
         if(rows.length>0){
             const list_table = ['promo','events','tenant']
@@ -69,7 +69,7 @@ exports.lists = function(req,res,resp,conn,params){
 
             var limit = ` LIMIT ` + page + `,` + per_page;
 
-            var where = ` WHERE riv_favorite.id_account="` + authrow.id_account + `"`
+            var where = ` WHERE favorite.id_account="` + authrow.id_account + `"`
 
             var qr_build = ``;
             for(i=0;i<table_length;i++){
@@ -79,18 +79,18 @@ exports.lists = function(req,res,resp,conn,params){
                 const stab = list_table[i];
 
                 qr_build += ` ( SELECT
-                    riv_favorite.id,
-                    riv_` + stab + `.` + stab + ` AS title_name,
-                    riv_` + stab + `.image AS image,
-                    riv_` + stab + `.id AS id_items,
-                    riv_favorite.table_name,
-                    riv_favorite.id_account,
-                    riv_favorite.created_date,
-                    riv_favorite.modified_date
+                    favorite.id,
+                    ` + stab + `.` + stab + ` AS title_name,
+                    ` + stab + `.image AS image,
+                    ` + stab + `.id AS id_items,
+                    favorite.table_name,
+                    favorite.id_account,
+                    favorite.created_date,
+                    favorite.modified_date
                 FROM
-                    riv_` + stab + `
-                INNER JOIN riv_favorite ON riv_` + stab + `.id=riv_favorite.id_items 
-                WHERE riv_favorite.id_account="` + authrow.id_account + `" AND riv_favorite.table_name LIKE "` + stab + `" ) ` + union
+                    ` + stab + `
+                INNER JOIN favorite ON ` + stab + `.id=favorite.id_items 
+                WHERE favorite.id_account="` + authrow.id_account + `" AND favorite.table_name LIKE "` + stab + `" ) ` + union
             }
 
             var main_qry = ` ` + qr_build + `
@@ -98,7 +98,7 @@ exports.lists = function(req,res,resp,conn,params){
             ` + limit + `;`;
 
             conn.query(` ` + main_qry + `
-                SELECT COUNT(*) as sum FROM riv_` + table + ` ` + where + ` limit 1;
+                SELECT COUNT(*) as sum FROM ` + table + ` ` + where + ` limit 1;
                 `, [1, 2],  function (error, rows, fields){
                 if(error){
                     console.log(error)

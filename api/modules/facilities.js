@@ -25,12 +25,12 @@ exports.lists = function(resp,conn,params,res){
     var main_qry = `SELECT 
         *
         FROM 
-        riv_` + table + ` 
+        ` + table + ` 
         ORDER BY id DESC
         ` + limit + `;`;
 
     conn.query(` ` + main_qry + `
-        SELECT COUNT(*) as sum FROM riv_` + table + ` limit 1;
+        SELECT COUNT(*) as sum FROM ` + table + ` limit 1;
         `, [1, 2],  function (error, rows, fields){
         if(error){
             console.log(error)
@@ -102,13 +102,13 @@ exports.byid = function(req,res,resp,conn,baseurl){
     var main_qry = `SELECT 
         *
         FROM 
-        riv_` + table + ` 
+        ` + table + ` 
         ${where}
         ORDER BY id DESC
         ` + limit + `;`;
 
     conn.query(` ` + main_qry + `
-        SELECT COUNT(*) as sum FROM riv_` + table + ` ${where} limit 1;
+        SELECT COUNT(*) as sum FROM ` + table + ` ${where} limit 1;
         `, [1, 2],  function (error, rows, fields){
         if(error){
             console.log(error)
@@ -171,7 +171,7 @@ exports.add = function(req,res,resp,conn){
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
         if(rows.length>0){
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -193,7 +193,7 @@ exports.add = function(req,res,resp,conn){
                 post["image"] =  inp.image
                 post["created_date"] = datenow
 
-            conn.query(`INSERT INTO riv_${table} SET ?`, post);
+            conn.query(`INSERT INTO ${table} SET ?`, post);
             
                 items["data"] = post;
                 items["authimg"] = respimg.data.auth
@@ -221,7 +221,7 @@ exports.edit = function(req,res,resp,conn){
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
         if(rows.length>0 && id!=null){
             const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
@@ -247,7 +247,7 @@ exports.edit = function(req,res,resp,conn){
                     items["authimg"] = respimg.data.auth
                     items["allowimg"] = Array(inp.image)
                 }
-            conn.query(`UPDATE riv_${table} SET ? ${where}`, post);
+            conn.query(`UPDATE ${table} SET ? ${where}`, post);
             
                 items["data"] = post;
                 items["status"] = 200;
@@ -270,9 +270,9 @@ exports.del = function(req,res,resp,conn){
     const datenow = fecha.format(new Date(), 'YYYY-MM-DD HH:mm:ss')
     const namefile = fecha.format(new Date(), 'YYYYMMDDHHmmss')
 
-    conn.query(`SELECT a.* FROM riv_superuser a INNER JOIN riv_suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
+    conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="`+ auth +`";`,  async function (error, rows, fields){
         if(rows.length>0){
-            conn.query(`DELETE FROM riv_${table} WHERE id=${inp.id}`);
+            conn.query(`DELETE FROM ${table} WHERE id=${inp.id}`);
                 items["msg"] = "Delete Successfully!!"; 
                 items["status"] = 200;
             resp.ok(items,res);

@@ -22,61 +22,62 @@ module.exports = {
 	methods: {
 	},
 	mounted: async function(){
-		const edit = await axios.get(rest["bankbyid"] + `?id=${this.$route.params.id}`);
-		var datas = edit.data.data;
 		
 		var vue = this
-		var act = {
-			api: rest["editbank"],
+		$('#form-bank').createForm({
 			vue: vue,
 			action: 'edit',
-			back: 'bank'
-		}
+			rest:{
+				api: rest["editbank"],
+				databyid: `${rest["bankbyid"]}?id=${this.$route.params.id}`
+			},
+			back: 'bank',
+			form(datas){
+				var datas = datas.data.data;
+				var longs = datas.produk.length;
+				var temp = ``
+				for(var i=1; i < longs; i++){
+					temp += `<div class="col-12" data-idbox="${i}">
+						<div class="row">
+						<div class="col-md-10">
+							<div class="form-group">
+								<input type="text" name="namaProduk[]" id="namaProduk" value="${datas.produk[i]}" placeholder="Nama Produk Kartu" class="form-control" />
+								<div id="namaProduk-error"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a><a href="#" class="btn btn-danger mr-2 min" data-iddel="${i}">-</a></div>
+							</div>
+						</div>
+						</div>
+					</div>`
 
-		var longs = datas.produk.length;
-		var temp = ``
-		for(var i=1; i < longs; i++){
-			temp += `<div class="col-12" data-idbox="${i}">
-				<div class="row">
-				<div class="col-md-10">
-					<div class="form-group">
-						<input type="text" name="namaProduk[]" id="namaProduk" value="${datas.produk[i]}" placeholder="Nama Produk Kartu" class="form-control" />
-						<div id="namaProduk-error"></div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="row">
-						<div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a><a href="#" class="btn btn-danger mr-2 min" data-iddel="${i}">-</a></div>
-					</div>
-				</div>
-				</div>
-			</div>`
+				}
+				return [     
+					$.inptext('Nama Bank','namaBank','namaBank',true,{
+						placeholder: 'Nama Bank',
+						value: datas.bank 
+					}),
+					$.html(`<div class="row" id="boxs"><div class="col-12" data-idbox="0"><div class="row"><div class="col-md-10">`),
+					$.inptext('Nama Produk Kartu','namaProduk[]','namaProduk',true,{
+						placeholder: 'Nama Produk Kartu',
+						value: datas.produk[0] == null ? '' : datas.produk[0] 
+					}),
+					$.html(`</div>`),
+					$.html(`
+		               <div class="form-group">
+		                  <label>Action</label>
+		                  <div class="row">
+		                     <div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a></div>
+		                  </div>
+		               </div>
 
-		}
-
-		$('#form-bank').createForm(act,
-		[     
-			$.inptext('Nama Bank','namaBank','namaBank',true,{
-				placeholder: 'Nama Bank',
-				value: datas.bank 
-			}),
-			$.html(`<div class="row" id="boxs"><div class="col-12" data-idbox="0"><div class="row"><div class="col-md-10">`),
-			$.inptext('Nama Produk Kartu','namaProduk[]','namaProduk',true,{
-				placeholder: 'Nama Produk Kartu',
-				value: datas.produk[0] == null ? '' : datas.produk[0] 
-			}),
-			$.html(`</div>`),
-			$.html(`
-               <div class="form-group">
-                  <label>Action</label>
-                  <div class="row">
-                     <div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a></div>
-                  </div>
-               </div>
-
-			`),
-			$.html(`</div></div>${temp}</div>`),
-	  	]);
+					`),
+					$.html(`</div></div>${temp}</div>`),
+			  	]
+			}
+		});
 
 		$("#form-bank").on("click","#boxs .plus", function(e){
 			e.preventDefault();

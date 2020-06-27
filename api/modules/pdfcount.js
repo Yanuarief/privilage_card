@@ -41,13 +41,13 @@ exports.lists = function(resp,conn,params,res){
     var main_qry = `SELECT 
         *
         FROM 
-        riv_` + table + ` 
+        ` + table + ` 
         ` + where + `
         ORDER BY id DESC
         ` + limit + `;`;
 
     conn.query(` ` + main_qry + `
-        SELECT COUNT(*) as sum FROM riv_` + table + ` ` + where + ` limit 1;
+        SELECT COUNT(*) as sum FROM ` + table + ` ` + where + ` limit 1;
         `, [1, 2],  function (error, rows, fields){
         
         if(error){
@@ -74,7 +74,7 @@ exports.lists = function(resp,conn,params,res){
                 pdf(dataBuffer)
                 .then(async function(data) {
                     if(item.total_page!=data.numrender || item.total_page==0){
-                        conn.query(`UPDATE riv_` + table + ` SET total_page = ? ` + where + ` `, [data.numrender]);
+                        conn.query(`UPDATE ` + table + ` SET total_page = ? ` + where + ` `, [data.numrender]);
                     }
                     console.log('step 1');
 

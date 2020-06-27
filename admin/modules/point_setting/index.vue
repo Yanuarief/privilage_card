@@ -24,46 +24,47 @@ module.exports = {
 	},
 	async mounted (){
 		var vue = this
-		var act = {
-			api: rest["post_point_setting"],
+		$('#form-input-setting-point').createForm({
 			vue: vue,
-			action: 'Simpan',
-			back: false
-        }
+			rest: {
+				api: rest["post_point_setting"],
+				databyid: rest["get_point_setting"]
+			},
+			action: 'edit',
+			textaction: 'Simpan',
+			back: false,
+			form(getPointSet){
+        		var datas = getPointSet.data.data;
+				return [   
+		            $.html(`<div class="row">`),
+		            $.html(`<div class="col-md-12 text-center mt-2"><label>Setting Poin Pembayaran ETC</label><br></div>`),
+		            $.html(`</div>`),
+		            $.inpcurrency('Kelipatan Nominal','kelipantanNominalEtc','kelipantanNominalEtc',true,{
+		                placeholder: 'Kelipatan Nominal',
+		                value: datas.bank.kelipatan_nominal
+		            }),
+		            
+		            $.inpnumber('Jumlah Point','jmlPointEtc','jmlPointEtc',true,{
+						placeholder: 'Jumlah Point',
+		                value: datas.bank.jumlah_point
+		            }),
+		            
 
-        const getPointSet = await axios.get(rest["get_point_setting"]);
-        var datas = getPointSet.data.data;
-
-		$('#form-input-setting-point').createForm(act,
-		[   
-            $.html(`<div class="row">`),
-            $.html(`<div class="col-md-12 text-center mt-2"><label>Setting Poin Pembayaran ETC</label><br></div>`),
-            $.html(`</div>`),
-            $.inpcurrency('Kelipatan Nominal','kelipantanNominalEtc','kelipantanNominalEtc',true,{
-                placeholder: 'Kelipatan Nominal',
-                value: datas.bank.kelipatan_nominal
-            }),
-            
-            $.inpnumber('Jumlah Point','jmlPointEtc','jmlPointEtc',true,{
-				placeholder: 'Jumlah Point',
-                value: datas.bank.jumlah_point
-            }),
-            
-
-            $.html(`<div class="row">`),
-            $.html(`<div class="col-md-12 text-center mt-2"><label>Setting Poin Pembayaran CASH</label><br></div>`),
-            $.html(`</div>`),
-            $.inpcurrency('Kelipatan Nominal','kelipantanNominalCash','kelipantanNominalCash',true,{
-				placeholder: 'Kelipatan Nominal',
-                value: datas.cash.kelipatan_nominal
-            }),
-            
-            $.inpnumber('Jumlah Point','jmlPointCash','jmlPointCash',true,{
-				placeholder: 'Jumlah Point',
-                value: datas.cash.jumlah_point
-            }),
-            
-        ]);
+		            $.html(`<div class="row">`),
+		            $.html(`<div class="col-md-12 text-center mt-2"><label>Setting Poin Pembayaran CASH</label><br></div>`),
+		            $.html(`</div>`),
+		            $.inpcurrency('Kelipatan Nominal','kelipantanNominalCash','kelipantanNominalCash',true,{
+						placeholder: 'Kelipatan Nominal',
+		                value: datas.cash.kelipatan_nominal
+		            }),
+		            
+		            $.inpnumber('Jumlah Point','jmlPointCash','jmlPointCash',true,{
+						placeholder: 'Jumlah Point',
+		                value: datas.cash.jumlah_point
+		            }),
+		        ]
+			}
+		});
       
       
 	}
