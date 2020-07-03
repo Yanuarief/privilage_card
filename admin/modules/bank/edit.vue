@@ -22,6 +22,53 @@ module.exports = {
 	methods: {
 	},
 	mounted: async function(){
+
+		function html_card(opt = {}){
+			
+			var number = opt.number,
+				id_prod = opt.id_prod?opt.id_prod:0,
+				namaProduk = opt.namaProduk?opt.namaProduk:``,
+				hid_prod = 0
+
+			if(opt.label){
+				var label = opt.label.status==false?``:`<label>${opt.label.name}</label>`
+			}
+
+			if(opt.id_prod){
+				hid_prod = id_prod>0?id_prod:0
+			}
+
+			if(number>0){
+				return `
+				<div class="col-12" data-idbox="${number}">
+					<div class="row">
+						<div class="col-md-10">
+							<div class="form-group">
+								<input type="hidden" name="id_prod[]" value="${hid_prod}">
+								<input type="text" name="namaProduk[]" id="namaProduk" value="${namaProduk}" placeholder="Nama Produk Kartu" class="form-control" />
+								<div id="namaProduk-error"></div>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="row">
+								<div class="col-12">
+									<a href="#" class="btn btn-success mr-2 plus">+</a>
+									<a href="#" class="btn btn-danger mr-2 min" data-iddel="${number}">-</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>`;
+			}else{
+				return `
+				<div class="form-group">
+					${label}
+					<input type="hidden" name="id_prod[]" value="${hid_prod}">
+					<input type="text" name="namaProduk[]" id="namaProduk" value="${namaProduk}" placeholder="Nama Produk Kartu" class="form-control" />
+					<div id="namaProduk-error"></div>
+				</div>`;
+			}
+		};
 		
 		var vue = this
 		$('#form-bank').createForm({
@@ -34,36 +81,35 @@ module.exports = {
 			back: 'bank',
 			form(datas){
 				var datas = datas.data.data;
-				var longs = datas.produk.length;
+				var first_id = datas.produk[0].id == null ? '' : datas.produk[0].id
+				var first_name = datas.produk[0].name == null ? '' : datas.produk[0].name
+				var longs = Object.keys(datas.produk).length;
+				console.log(longs);
 				var temp = ``
 				for(var i=1; i < longs; i++){
-					temp += `<div class="col-12" data-idbox="${i}">
-						<div class="row">
-						<div class="col-md-10">
-							<div class="form-group">
-								<input type="text" name="namaProduk[]" id="namaProduk" value="${datas.produk[i]}" placeholder="Nama Produk Kartu" class="form-control" />
-								<div id="namaProduk-error"></div>
-							</div>
-						</div>
-						<div class="form-group">
-							<div class="row">
-								<div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a><a href="#" class="btn btn-danger mr-2 min" data-iddel="${i}">-</a></div>
-							</div>
-						</div>
-						</div>
-					</div>`
-
+					var number = i+1;
+					temp += html_card({
+						number: number,
+						id_prod: datas.produk[i].id,
+						namaProduk: datas.produk[i].name,
+					});
 				}
+
 				return [     
 					$.inptext('Nama Bank','namaBank','namaBank',true,{
 						placeholder: 'Nama Bank',
 						value: datas.bank 
 					}),
 					$.html(`<div class="row" id="boxs"><div class="col-12" data-idbox="0"><div class="row"><div class="col-md-10">`),
-					$.inptext('Nama Produk Kartu','namaProduk[]','namaProduk',true,{
-						placeholder: 'Nama Produk Kartu',
-						value: datas.produk[0] == null ? '' : datas.produk[0] 
-					}),
+					$.html(`${html_card({
+						number: 0,
+						id_prod: first_id,
+						namaProduk: first_name,
+						label: {
+							status: true,
+							name: `Nama Produk Kartu`
+						}	
+					})}`),
 					$.html(`</div>`),
 					$.html(`
 		               <div class="form-group">
@@ -84,23 +130,9 @@ module.exports = {
 			var idx = $("#boxs > div.col-12").length
 			var idn = $( "#boxs > div.col-12" ).eq( parseInt(idx) - 1 ).data("idbox");
 			var idele = parseInt(idn) + 1
-			var set_val = idele + 1
-			var set_id = `
-			<div class="col-12" data-idbox="${idele}">
-				<div class="row">
-				<div class="col-md-10">
-					<div class="form-group">
-						<input type="text" name="namaProduk[]" id="namaProduk" placeholder="Nama Produk Kartu" class="form-control" />
-						<div id="namaProduk-error"></div>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="row">
-						<div class="col-12"><a href="#" class="btn btn-success mr-2 plus">+</a><a href="#" class="btn btn-danger mr-2 min" data-iddel="${idele}">-</a></div>
-					</div>
-				</div>
-				</div>
-			</div>`
+			var set_id = html_card({
+				number: idele	
+			})
 
 			$(`#boxs`).append(set_id);
 		})

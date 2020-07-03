@@ -110,20 +110,23 @@ exports.byid = function(req, res, resp, conn, baseurl) {
         } else {
             var datas = rows;
             var prod = []
-
+            var call = datas.length>0?datas.length-1:0
             datas.forEach(function(item, index, arr) {
-
-                prod.push(item.name)
+                prod.push({
+                	id: item.id,
+                	name: item.name
+                })
+                var prud = Object.assign({}, prod)
                 arr[index] = {
                     "id": item.id_bank,
                     "bank": item.nama_bank,
-                    "produk": prod
+                    "produk": prud
                 };
 
             });
 
             var items = {};
-            items["data"] = datas[0];
+            items["data"] = datas[call];
             items["status"] = 200;
             resp.ok(items, res);
         }
@@ -198,7 +201,7 @@ exports.edit = function(req, res, resp, conn) {
 
     conn.query(`SELECT a.* FROM superuser a INNER JOIN suauth b ON a.id=b.id_account where b.auth="` + auth + `";`, async function(error, rows, fields) {
         if (rows.length > 0 && id != null) {
-            const huplauth = 'S4l4mhebat2020'
+            /*const huplauth = 'S4l4mhebat2020'
             const authimg = md5(base64encode(`${auth} ${huplauth} ${datenow} img`))
 
             var imgauth = {
@@ -210,9 +213,53 @@ exports.edit = function(req, res, resp, conn) {
                 'Authorization': huplauth
             }
 
-            const respimg = await axios.post('https://gmscode.net/auth', imgauth, { headers: headers });
+            const respimg = await axios.post('https://gmscode.net/auth', imgauth, { headers: headers });*/
+
             var items = {};
             var post1 = {};
+
+            post1["nama_bank"] = `${inp.namaBank}`
+
+            conn.query(`UPDATE ${table[0]} SET ? ${where};`, post1, async function(error, rows, fields) {
+
+	            var inpprod = inp.id_prod;
+	            var inpnamaProduk = inp.namaProduk;
+	            var lprod = inp.id_prod.length;
+
+	            var where_not = ` where id_bank = '${id}' and `;
+	            var not = ``;
+	            for(var i=0;i<lprod;i++){
+	            	
+	            	var post2 = {};
+	            		post2["name"] = inpnamaProduk[i]
+
+	            	if(inpprod[i]==0){
+	            		post2["status"] = `1`
+	            		post2["id_bank"] = id
+
+	            		var unk = new Promise(function(resolve,reject){
+		            		conn.query(`INSERT ${table[2]} SET ?;`, post2, async function(error, rows, fields) {
+		            			resolve(rows.insertId);
+		            		});
+	            		})
+
+	            		var idprodx = await unk
+	            	}else{
+		            	var where = ` WHERE id_bank = '${id}' and id='${inpprod[i]}' `;
+		            	var idprodx = inpprod[i]
+	            		conn.query(`UPDATE ${table[2]} SET ? ${where};`, post2);
+	            	}
+
+	            	not += i==0?`id!='${idprodx}'`:` and id!='${idprodx}'`
+	            }
+
+	            where_x = `${where_not} ( ${not} )`
+	            conn.query(`UPDATE ${table[2]} SET status = '0' ${where_x};`)
+
+            });            
+
+
+            /*var post1 = {};
             var post2 = {};
 
             post1["nama_bank"] = `${inp.namaBank}`
@@ -226,7 +273,7 @@ exports.edit = function(req, res, resp, conn) {
                     conn.query(`INSERT INTO ${table[2]} SET ?`, post2)
                 }
 
-            });
+            });*/
 
             items["data"] = inp;
             items["status"] = 200;
@@ -318,7 +365,7 @@ exports.listProduk = function(req, res, resp, conn) {
     var inp = req.query.id == null || req.query.id == "undefined" ? '' : req.query.id
     var page = (current - 1) * (per_page > 0 ? per_page : 10);
 
-    var where = `WHERE id_bank = '${inp}' AND name LIKE '%${search}%' `;
+    var where = `WHERE id_bank = '${inp}' AND status=1 AND name LIKE '%${search}%' `;
 
     var limit = ` LIMIT ${page},${per_page} `;
 
